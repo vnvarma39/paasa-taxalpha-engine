@@ -35,6 +35,10 @@ from .ucits_optimizer import (
 from .global_tax import (
     GlobalTaxEngine,
 )
+from .benchmark import (
+    TaxAlphaFinancialBenchmark,
+    EngineThroughputBenchmark,
+)
 
 __all__ = [
     "Rule115CurrencyConverter",
@@ -51,4 +55,6 @@ __all__ = [
     "ReportExporter",
     "UCITSOptimizer",
     "GlobalTaxEngine",
+    "TaxAlphaFinancialBenchmark",
+    "EngineThroughputBenchmark",
 ]

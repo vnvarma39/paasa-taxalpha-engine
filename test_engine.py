@@ -254,6 +254,30 @@ def test_exporter_excel(analysis_data):
         print(f"  [NOTE] Excel exporter skipped or optional: {e}")
 
 
+def test_benchmark_engine(analysis_data):
+    print("\n" + "=" * 65)
+    print("[7] TESTING TAX ALPHA & COMPUTATIONAL BENCHMARK ENGINE")
+    print("=" * 65)
+
+    from core.benchmark import TaxAlphaFinancialBenchmark, EngineThroughputBenchmark
+
+    bench = TaxAlphaFinancialBenchmark.evaluate(analysis_data, tax_slab_pct=30.0)
+    assert bench["tax_alpha_inr"] > 0, "Tax alpha INR should be positive"
+    assert bench["tax_alpha_bps"] > 0, "Tax alpha bps should be positive"
+    assert len(bench["benchmark_tracking"]) >= 4, "Should have 4 benchmark ETF tracking pairs"
+    print(f"  [OK] Financial Tax Alpha verified: ₹{bench['tax_alpha_inr']:,.2f} (+{bench['tax_alpha_bps']} bps)")
+    print(f"  [OK] Tracking error fidelity verified: VOO/IVV TE={bench['benchmark_tracking'][0]['tracking_error_pct']}%")
+
+    # Fast micro-throughput check
+    r115_bench = EngineThroughputBenchmark.benchmark_rule115_lookups(iterations=1000)
+    assert r115_bench["throughput_ops_per_sec"] > 1000, "Rule 115 throughput should exceed 1000 ops/sec"
+    print(f"  [OK] Rule 115 Micro-Throughput verified: {r115_bench['throughput_ops_per_sec']:,} lookups/sec")
+
+    fifo_bench = EngineThroughputBenchmark.benchmark_fifo_matching(batch_sizes=[200])
+    assert fifo_bench[0]["throughput_trades_per_sec"] > 500, "FIFO throughput should exceed 500 trades/sec"
+    print(f"  [OK] FIFO Lot Micro-Throughput verified: {fifo_bench[0]['throughput_trades_per_sec']:,} trades/sec")
+
+
 def main():
     csv_path = os.path.join(base_dir, "data", "sample_portfolio_ibkr.csv")
 
@@ -267,11 +291,11 @@ def main():
     analysis["dtaa_form_67"] = dtaa_report
 
     test_exporter_excel(analysis)
+    test_benchmark_engine(analysis)
 
     # Export unified JSON output
     out_json = os.path.join(base_dir, "data", "engine_test_output.json")
     with open(out_json, "w", encoding="utf-8") as f:
-        # Save a clean copy
         json.dump(analysis, f, indent=2, default=str)
 
     print("\n" + "=" * 65)
@@ -282,3 +306,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

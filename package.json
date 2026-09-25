@@ -1,0 +1,22 @@
+{
+  "name": "paasa-taxalpha-engine",
+  "version": "1.1.0",
+  "description": "High-throughput dual-calendar tax-loss harvester and Rule 115 engine for Indian global investors",
+  "type": "module",
+  "main": "packages/engine-ts/src/index.ts",
+  "scripts": {
+    "test": "node --experimental-strip-types packages/engine-ts/src/index.ts",
+    "benchmark": "node --experimental-strip-types packages/engine-ts/src/benchmark.ts",
+    "benchmark:py": "python benchmark.py"
+  },
+  "keywords": [
+    "tax-alpha",
+    "rule-115",
+    "dtaa",
+    "cross-border-tax",
+    "lrs",
+    "fintech"
+  ],
+  "author": "Nikhil Varma Vanapala <vnvarma39@gmail.com>",
+  "license": "MIT"
+}
