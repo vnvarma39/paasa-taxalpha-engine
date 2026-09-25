@@ -4,10 +4,12 @@
  * Measures V8 runtime throughput and latency for Rule 115 FX queries and FIFO lot matching.
  */
 
-import { Rule115Converter, FIFOTaxEngineTS, type Trade } from "./index.ts";
+import { Rule115CurrencyConverter } from "./currency.ts";
+import { FIFOTaxEngine } from "./tax_engine.ts";
+import type { TradeRecord } from "./types.ts";
 
 function benchmarkRule115(iterations: number = 50000) {
-  const converter = new Rule115Converter();
+  const converter = new Rule115CurrencyConverter();
   const sampleDates: string[] = [];
   for (let y = 2021; y <= 2025; y++) {
     for (let m = 1; m <= 12; m++) {
@@ -19,7 +21,7 @@ function benchmarkRule115(iterations: number = 50000) {
   const start = performance.now();
   for (let i = 0; i < iterations; i++) {
     const dt = sampleDates[i % sampleDates.length];
-    converter.getRate(dt);
+    converter.getRule115Rate(dt);
   }
   const elapsedMs = performance.now() - start;
   const opsPerSec = Math.round(iterations / (elapsedMs / 1000));
@@ -29,12 +31,12 @@ function benchmarkRule115(iterations: number = 50000) {
 }
 
 function benchmarkFifoMatching(batchSizes: number[] = [1000, 5000, 10000]) {
-  const engine = new FIFOTaxEngineTS();
+  const engine = new FIFOTaxEngine();
   const symbols = ["VOO", "QQQ", "NVDA", "AAPL", "MSFT", "AMZN", "GOOGL", "AMD", "TSLA"];
   const results = [];
 
   for (const n of batchSizes) {
-    const trades: Trade[] = [];
+    const trades: TradeRecord[] = [];
     const baseDate = new Date("2022-01-01").getTime();
 
     for (let i = 0; i < n; i++) {
