@@ -83,18 +83,18 @@ Paasa enables Indian HNIs, founders, and tech professionals to build generationa
 
 ### B. Rule 115 SBI TT Buying Rate Normalization
 For any transaction date $T$:
-1. Finds the preceding calendar month end: $T_{\text{preceding\_month}}$.
+1. Finds the preceding calendar month end: $T_{\text{preceding month}}$.
 2. Looks up the exact SBI TT Buying Rate in `sbi_tt_historical.json`.
 3. Converts cost basis and proceeds to INR offline with zero external network dependencies.
-4. Decomposes total INR return into **Asset Alpha ($)** vs **Currency Drift (USD/INR Rupee Depreciation Tailwind)**.
+4. Decomposes total INR return into **Asset Alpha (USD)** vs **Currency Drift (USD/INR Rupee Depreciation Tailwind)**.
 
 ### C. Wash-Sale Correlated ETF Substitution Matrix
 Under US IRS rules (and prudent risk management), repurchasing a substantially identical security within 30 days triggers the wash-sale disallowance rule. To harvest Indian capital losses without violating wash-sale intent or losing market exposure:
-- **VOO** (Vanguard S&P 500) $\rightarrow$ Swap into **IVV** ($\rho = 0.999$) or **SPY**
-- **QQQ** (Invesco Nasdaq 100) $\rightarrow$ Swap into **QQQM** ($\rho = 0.999$) or **VGT** ($\rho = 0.952$)
-- **NVDA** $\rightarrow$ Swap into **SMH** ($\rho = 0.884$) or **SOXX** ($\rho = 0.862$)
-- **AMD** $\rightarrow$ Swap into **SMH** ($\rho = 0.842$) or **NVDA** ($\rho = 0.825$)
-- **TSLA** $\rightarrow$ Swap into **ARKK** ($\rho = 0.785$) or **CARZ** ($\rho = 0.812$)
+- **VOO** (Vanguard S&P 500) → Swap into **IVV** ($\rho = 0.999$) or **SPY**
+- **QQQ** (Invesco Nasdaq 100) → Swap into **QQQM** ($\rho = 0.999$) or **VGT** ($\rho = 0.952$)
+- **NVDA** → Swap into **SMH** ($\rho = 0.884$) or **SOXX** ($\rho = 0.862$)
+- **AMD** → Swap into **SMH** ($\rho = 0.842$) or **NVDA** ($\rho = 0.825$)
+- **TSLA** → Swap into **ARKK** ($\rho = 0.785$) or **CARZ** ($\rho = 0.812$)
 
 ### D. Multi-Tab CA-Ready Excel Workbook Generation
 Generates a formatted, publication-grade Excel workbook with 5 dedicated schedules:
@@ -202,7 +202,7 @@ Unlike Indian and US FIFO/Specific-ID rules, UK tax law mandates **Section 104 S
 For global non-US resident aliens (NRAs) in India, the UK, Europe, UAE, and Singapore, investing in US-domiciled ETFs (`VOO`, `QQQ`, `VT`, `SPY`) exposes them to severe financial drag:
 
 1. **The 40% US Estate Tax Risk on US-Situs Assets:**
-   - Non-US residents holding US-domiciled assets face up to **40% US federal estate tax on assets over just $60,000** upon death.
+   - Non-US residents holding US-domiciled assets face up to **40% US federal estate tax on assets over just \$60,000** upon death.
    - **The UCITS Solution:** Irish-domiciled UCITS ETFs are non-US situs assets. Migrating from `VOO` to `CSPX` / `VUAA` (London Stock Exchange in USD) **completely eliminates US estate tax liability**.
 2. **15% vs 30% Dividend Withholding Tax Arbitrage:**
    - Standard US withholding for non-treaty global investors is 30% (and 25% under India-US DTAA).
