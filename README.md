@@ -139,36 +139,41 @@ Console Output:
 - `--port 8080`: Bind to a custom port (default: 5000).
 - `--host 0.0.0.0`: Listen on all network interfaces.
 
-<br/>
-
-<div align="center">
-  <img src="assets/terminal_full_page.png" alt="Paasa Full Terminal Matrix" width="100%" style="border-radius: 8px; border: 1px solid #1F242D;" />
-  <p><em>Figure 2: Full interactive audit ledger displaying Rule 115 FIFO lots, asset return decomposition, and Schedule FA compliance matrices.</em></p>
-</div>
-
-<br/>
-
 ---
 
 ## 5. Visual Terminal Walkthrough
 
 <div align="center">
   <img src="assets/terminal_overview.png" alt="Paasa Terminal Dashboard Overview" width="100%" style="border-radius: 8px; border: 1px solid #1F242D;" />
-  <p><em>Figure 1: Bespoke Brutalist Financial Terminal displaying ₹79,927 in pre-March 31 tax alpha and live wash-sale replacement matrix.</em></p>
+  <p><em>Figure 1: Bespoke Brutalist Financial Terminal displaying ₹1,16,438 in pre-March 31 tax alpha and live wash-sale replacement matrix with live checkboxes and simulated savings.</em></p>
 </div>
 
 <br/>
 
 <div align="center">
   <img src="assets/global_jurisdictions.png" alt="Multi-Jurisdiction Cross-Border Tax Terminal" width="100%" style="border-radius: 8px; border: 1px solid #1F242D;" />
-  <p><em>Figure 2: Real-time Return Decomposition (Stock Alpha vs USD/INR Currency Drift) and Live Harvest Execution Desk.</em></p>
+  <p><em>Figure 2: Multi-Jurisdiction Cross-Border Tax Arbitrage Engine mapping realized gains across UK (HMRC Sec 104 Share Pooling), US (IRS 8949), India (Rule 115), and UAE (0% CGT).</em></p>
 </div>
 
 <br/>
 
 <div align="center">
   <img src="assets/terminal_full_page.png" alt="Full Terminal Ledger and Compliance Matrix" width="100%" style="border-radius: 8px; border: 1px solid #1F242D;" />
-  <p><em>Figure 3: Full interactive audit ledger displaying Rule 115 FIFO lots, HMRC Section 104 pooling, and Schedule FA compliance matrices.</em></p>
+  <p><em>Figure 3: Full interactive audit ledger displaying Rule 115 FIFO lots, Return Decomposition (Stock Alpha vs USD/INR Currency Drift), and asset allocation matrix.</em></p>
+</div>
+
+<br/>
+
+<div align="center">
+  <img src="assets/ucits_arbitrage.png" alt="UCITS Estate Tax & Withholding Tax Arbitrage" width="100%" style="border-radius: 8px; border: 1px solid #1F242D;" />
+  <p><em>Figure 4: US Estate Tax Neutralizer & UCITS Withholding Tax Arbitrage matrix, shielding global investors from the 40% US death tax and 15% dividend drag.</em></p>
+</div>
+
+<br/>
+
+<div align="center">
+  <img src="assets/interactive_showcase.png" alt="Zero-Install Interactive Showcase" width="100%" style="border-radius: 8px; border: 1px solid #1F242D;" />
+  <p><em>Figure 5: Zero-Install Standalone Interactive Showcase (<a href="https://vnvarma39.github.io/paasa-taxalpha-engine/">Live on GitHub Pages</a>) executing 100% in-browser client-side with 60-second founder scenario presets.</em></p>
 </div>
 
 <br/>
@@ -291,15 +296,24 @@ paasa/
 │   └── index.html                     # 60-second interactive client app (GitHub Pages ready)
 │
 ├── packages/                          # High-Performance Polyglot Modules
-│   └── engine-ts/                     # Pure TypeScript Rule 115 & FIFO Lot Engine
+│   └── engine-ts/                     # Pure Modular TypeScript Engine Suite
 │       └── src/
-│           ├── index.ts               # Core TypeScript types, converter & FIFO engine
-│           └── benchmark.ts           # V8 high-throughput micro-benchmark runner
+│           ├── types.ts               # Core financial interfaces & domain types
+│           ├── currency.ts            # Rule 115 SBI TT Buying Rate converter
+│           ├── tax_engine.ts          # FIFO lot matching & Budget 2024 LTCG/STCG
+│           ├── loss_harvester.ts      # Pre-March 31 loss scanner & wash-sale matrix
+│           ├── ucits.ts               # UCITS estate tax & withholding optimizer
+│           ├── global_tax.ts          # UK HMRC Sec 104 pooling & US IRS model
+│           ├── index.ts               # Unified engine API export
+│           └── benchmark.ts           # V8 micro-benchmark runner (Node.js 24)
 │
-├── assets/                            # High-resolution terminal screenshots
+├── assets/                            # High-resolution populated screenshots
 │   ├── terminal_overview.png          # Main terminal overview & telemetry
-│   ├── global_jurisdictions.png       # Multi-jurisdiction & return decomposition
-│   └── terminal_full_page.png         # Full audit ledger & statutory matrix
+│   ├── global_jurisdictions.png       # Multi-jurisdiction & UK HMRC s104 audit
+│   ├── terminal_full_page.png         # Realized FIFO ledger & return decomposition
+│   ├── audit_ledger_schedule_fa.png   # Schedule FA & DTAA compliance matrix
+│   ├── ucits_arbitrage.png            # UCITS estate tax & withholding arbitrage
+│   └── interactive_showcase.png       # Zero-install interactive GitHub Pages UI
 │
 ├── core/                              # Financial calculation engine package
 │   ├── __init__.py                    # Exports core modules and helper functions
