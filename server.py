@@ -15,6 +15,7 @@ from core.dtaa_reconciler import DTAAReconciler
 from core.exporter import ReportExporter
 from core.ucits_optimizer import UCITSOptimizer
 from core.global_tax import GlobalTaxEngine
+from core.benchmark import TaxAlphaFinancialBenchmark, EngineThroughputBenchmark
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
@@ -69,6 +70,7 @@ def run_pipeline(csv_source, tax_slab_pct=30.0, selected_fy=None):
     analysis["uk_hmrc"] = uk_data
     analysis["jurisdiction_comparisons"] = jurisdiction_comps
     analysis["global_jurisdictions"] = GlobalTaxEngine.JURISDICTIONS
+    analysis["benchmark"] = TaxAlphaFinancialBenchmark.evaluate(analysis, tax_slab_pct=tax_slab_pct)
     analysis["tax_slab_pct"] = tax_slab_pct
     analysis["selected_fy"] = selected_fy or "ALL"
     analysis["total_trades_ingested"] = len(trades)
@@ -79,6 +81,13 @@ def run_pipeline(csv_source, tax_slab_pct=30.0, selected_fy=None):
 def index():
     """Serves the single-page application frontend."""
     return send_from_directory(STATIC_DIR, "index.html")
+
+@app.route("/docs/", methods=["GET"])
+@app.route("/docs/<path:filename>", methods=["GET"])
+def docs_proxy(filename="index.html"):
+    """Serves the standalone zero-install interactive showcase."""
+    docs_dir = os.path.join(BASE_DIR, "docs")
+    return send_from_directory(docs_dir, filename)
 
 @app.route("/<path:path>", methods=["GET"])
 def static_proxy(path):
@@ -121,6 +130,32 @@ def get_sample_analysis():
             "success": True,
             "source": "sample_portfolio_ibkr.csv",
             "data": analysis
+        })
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/benchmark", methods=["GET"])
+def get_benchmark():
+    """
+    Returns the comprehensive financial alpha performance benchmark
+    and engine throughput telemetry across Python and V8 runtimes.
+    """
+    try:
+        tax_slab = float(request.args.get("tax_slab", 30.0))
+        selected_fy = request.args.get("fy", "ALL")
+
+        # Run pipeline on sample portfolio to extract financial benchmark
+        analysis = run_pipeline(SAMPLE_CSV_PATH, tax_slab_pct=tax_slab, selected_fy=selected_fy)
+        financial_bench = TaxAlphaFinancialBenchmark.evaluate(analysis, tax_slab_pct=tax_slab)
+
+        # Run micro-throughput benchmark
+        throughput = EngineThroughputBenchmark.run_all()
+
+        return jsonify({
+            "success": True,
+            "financial_benchmark": financial_bench,
+            "engine_throughput": throughput,
+            "timestamp": datetime.now().isoformat()
         })
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
