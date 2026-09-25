@@ -1,0 +1,14 @@
+# GitHub Linguist Overrides:
+# Suppress large static HTML templates and generated JSON/CSV from language stats
+*.html linguist-detectable=false
+static/** linguist-vendored=true
+docs/** linguist-documentation=true
+*.csv linguist-detectable=false
+*.json linguist-detectable=false
+*.xlsx linguist-detectable=false
+assets/** linguist-documentation=true
+
+# Explicitly prioritize TypeScript and Python as primary codebase languages
+*.ts linguist-detectable=true
+packages/**/*.ts linguist-detectable=true
+*.py linguist-detectable=true
