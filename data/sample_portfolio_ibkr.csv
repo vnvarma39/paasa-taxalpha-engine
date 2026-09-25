@@ -1,0 +1,22 @@
+Date,Symbol,Asset_Type,Action,Quantity,Price_USD,Fees_USD,Withholding_Tax_USD,Notes
+2022-01-14,VOO,ETF,BUY,50,410.00,1.50,0.00,Initial LRS remittance allocation S&P 500
+2022-03-22,AAPL,EQUITY,BUY,60,165.00,1.00,0.00,Core tech holding
+2022-06-15,VOO,ETF,DIVIDEND,50,1.30,0.00,16.25,Q2 Dividend - 25% US Withholding Tax applied
+2022-10-18,NVDA,EQUITY,BUY,100,120.00,1.00,0.00,AI semiconductor position
+2023-02-10,MSFT,EQUITY,BUY,40,260.00,1.00,0.00,Enterprise cloud allocation
+2023-04-12,QQQ,ETF,BUY,45,315.00,1.50,0.00,Nasdaq 100 growth allocation
+2023-07-20,AMD,EQUITY,BUY,80,175.00,1.00,0.00,Datacenter AI expansion
+2023-09-15,AAPL,EQUITY,DIVIDEND,60,0.24,0.00,3.60,Q3 Dividend - 25% US Withholding Tax
+2023-11-05,TSLA,EQUITY,BUY,50,255.00,1.00,0.00,EV momentum position
+2024-03-10,VOO,ETF,SELL,20,468.00,1.50,0.00,LTCG rebalancing (held >24 months)
+2024-05-18,GOOGL,EQUITY,BUY,50,175.00,1.00,0.00,Search and generative AI allocation
+2024-06-20,MSFT,EQUITY,DIVIDEND,40,0.75,0.00,7.50,Q2 Dividend - 25% US Withholding
+2024-08-25,NVDA,EQUITY,SELL,40,128.00,1.00,0.00,STCG profit taking (held 22 months <= 24m)
+2024-11-12,AAPL,EQUITY,SELL,20,225.00,1.00,0.00,LTCG profit taking (held 31 months > 24m)
+2025-01-15,VOO,ETF,BUY,15,540.00,1.50,0.00,Dollar cost averaging into S&P 500
+2025-02-20,GOOGL,EQUITY,SELL,20,190.00,1.00,0.00,STCG short term swing (held 9 months)
+2025-05-10,QQQ,ETF,BUY,20,490.00,1.50,0.00,Nasdaq DCA top up
+2025-07-15,VOO,ETF,DIVIDEND,45,1.80,0.00,20.25,Q2 Dividend - 25% US Withholding Tax
+2025-10-10,NVDA,EQUITY,SELL,20,142.00,1.00,0.00,LTCG profit taking (held 36 months > 24m)
+2025-12-05,AMD,EQUITY,BUY,30,150.00,1.00,0.00,Dip buy
+2026-01-20,QQQ,ETF,DIVIDEND,65,0.70,0.00,11.38,Q4 Dividend - 25% US Withholding Tax

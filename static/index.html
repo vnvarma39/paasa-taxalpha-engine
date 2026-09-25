@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PAASA // TAXALPHA ENGINE — Dual-Calendar Terminal</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Distinct High-Character Typography: Newsreader (Editorial Serif) + Space Grotesk + JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['Newsreader', 'serif'],
+            sans: ['Space Grotesk', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            obsidian: {
+              DEFAULT: '#08090B',
+              surface: '#0E1014',
+              panel: '#13161C',
+              border: '#1F242D',
+              borderLight: '#2D3442',
+              hover: '#191D25',
+              subtle: '#3B4455'
+            },
+            acid: {
+              DEFAULT: '#D4FF00', // Stark Electric Acid Lime
+              glow: 'rgba(212, 255, 0, 0.18)',
+              dim: '#9EBF00',
+              dark: '#2A3300'
+            },
+            parchment: {
+              DEFAULT: '#F0EFEA',
+              muted: '#9DA4B0',
+              dark: '#5B6373'
+            },
+            alert: {
+              loss: '#FF453A',
+              gain: '#32D74B',
+              warn: '#FF9F0A'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #08090B;
+      color: #F0EFEA;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #0E1014;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #1F242D;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #D4FF00;
+    }
+    .terminal-border {
+      border: 1px solid #1F242D;
+    }
+    .terminal-border-light {
+      border: 1px solid #2D3442;
+    }
+    .acid-border-glow {
+      border: 1px solid #D4FF00;
+      box-shadow: 0 0 15px rgba(212, 255, 0, 0.12);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-obsidian text-parchment antialiased selection:bg-acid selection:text-black">
+
+  <!-- TOP TERMINAL TELEMETRY HEADER -->
+  <header class="border-b border-obsidian-border bg-obsidian-surface sticky top-0 z-50">
+    <div class="max-w-[1600px] mx-auto px-4 lg:px-6 h-14 flex items-center justify-between">
+      
+      <!-- Brand & Project Identity -->
+      <div class="flex items-center space-x-4">
+        <div class="flex items-baseline space-x-2">
+          <span class="font-mono font-bold text-lg tracking-tighter text-white">PAASA</span>
+          <span class="font-mono text-xs text-acid font-semibold uppercase tracking-widest">// TAXALPHA</span>
+        </div>
+        <div class="h-4 w-px bg-obsidian-border hidden sm:block"></div>
+        <div class="hidden md:flex items-center space-x-2 text-xs font-mono text-parchment-muted">
+          <span class="text-white font-medium">TERMINAL v1.0</span>
+          <span>•</span>
+          <span>YC S24 PORTFOLIO</span>
+          <span>•</span>
+          <span class="text-acid">RULE 115 FX ENGINE</span>
+        </div>
+      </div>
+
+      <!-- System Health & Quick Actions -->
+      <div class="flex items-center space-x-3 text-xs font-mono">
+        <div id="serverStatusBadge" class="flex items-center space-x-2 px-2.5 py-1 bg-obsidian-panel border border-obsidian-border text-acid">
+          <span class="w-2 h-2 rounded-none bg-acid animate-pulse"></span>
+          <span id="serverStatusText">SYS.ONLINE (127.0.0.1:5000)</span>
+        </div>
+
+        <button onclick="downloadCaReport('excel')" class="bg-acid hover:bg-white text-black font-mono font-bold text-xs px-3.5 py-1.5 transition flex items-center gap-1.5 tracking-tight active:translate-y-0.5">
+          <i data-lucide="download" class="w-3.5 h-3.5"></i>
+          <span>EXPORT CA WORKBOOK (.XLSX)</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- SPLIT-PANE WORKSPACE -->
+  <div class="flex-1 max-w-[1600px] w-full mx-auto flex flex-col lg:flex-row border-b border-obsidian-border">
+    
+    <!-- LEFT SIDEBAR: CONTROL & INGESTION TERMINAL RAIL (w-80 on large screens) -->
+    <aside class="w-full lg:w-80 lg:shrink-0 bg-obsidian-surface border-r border-obsidian-border p-4 lg:p-5 flex flex-col justify-between space-y-6">
+      <div class="space-y-6">
+        
+        <!-- Section Title -->
+        <div>
+          <span class="font-mono text-[11px] text-parchment-muted uppercase tracking-wider block mb-1">01 // INGESTION DESK</span>
+          <h2 class="text-sm font-bold text-white tracking-tight">Broker Trade Ledger</h2>
+        </div>
+
+        <!-- File Ingestion Drop Area -->
+        <div id="dropZone" class="border border-dashed border-obsidian-border hover:border-acid/80 bg-obsidian p-4 text-center cursor-pointer transition group">
+          <input type="file" id="csvFileInput" accept=".csv" class="hidden" onchange="handleFileUpload(event)">
+          <div class="flex flex-col items-center justify-center space-y-2">
+            <i data-lucide="file-up" class="w-5 h-5 text-parchment-muted group-hover:text-acid transition"></i>
+            <div class="text-xs font-mono text-white">
+              DROP BROKER CSV OR <span class="text-acid underline">BROWSE</span>
+            </div>
+            <div class="text-[10px] font-mono text-parchment-dark">
+              IBKR • DriveWealth • Schwab • Custom
+            </div>
+          </div>
+        </div>
+
+        <!-- Ingested File Readout -->
+        <div class="p-3 bg-obsidian border border-obsidian-border text-xs font-mono">
+          <div class="text-[10px] text-parchment-muted uppercase">ACTIVE DATA SOURCE</div>
+          <div id="activeSourceBadge" class="text-acid font-bold truncate mt-0.5">sample_portfolio_ibkr.csv</div>
+          <div class="mt-2 pt-2 border-t border-obsidian-border flex items-center justify-between text-[11px]">
+            <span class="text-parchment-muted">Parsed Trades:</span>
+            <span id="tradesCountDisplay" class="text-white font-bold">21 Orders</span>
+          </div>
+          <div class="mt-1 flex items-center justify-between text-[11px]">
+            <span class="text-parchment-muted">Execution Mode:</span>
+            <span class="text-acid font-semibold">100% Offline Local</span>
+          </div>
+        </div>
+
+        <!-- Quick 1-Click Reload -->
+        <button onclick="loadSamplePortfolio()" class="w-full py-2 bg-obsidian-panel hover:bg-obsidian-hover border border-obsidian-border text-xs font-mono text-parchment hover:text-white transition flex items-center justify-center gap-2">
+          <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-acid"></i>
+          <span>RELOAD SAMPLE PORTFOLIO</span>
+        </button>
+
+        <div class="h-px bg-obsidian-border"></div>
+
+        <!-- Section 2: Regime Parameters -->
+        <div class="space-y-4">
+          <div>
+            <span class="font-mono text-[11px] text-parchment-muted uppercase tracking-wider block mb-1">02 // TAX PARAMETERS</span>
+            <h2 class="text-sm font-bold text-white tracking-tight">Dual-Calendar & Slabs</h2>
+          </div>
+
+          <!-- Financial Year Segmented Switcher -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-mono text-parchment-muted flex justify-between">
+              <span>INDIAN FISCAL YEAR</span>
+              <span class="text-[10px] text-acid">APR 1 – MAR 31</span>
+            </label>
+            <div class="grid grid-cols-1 gap-1 text-xs font-mono">
+              <button type="button" onclick="changeFinancialYear('FY 2025-26')" id="fyBtn-FY 2025-26" class="fy-btn text-left px-3 py-2 bg-obsidian border border-acid text-acid font-semibold flex items-center justify-between">
+                <span>FY 2025–26</span>
+                <span class="text-[10px] bg-acid text-black px-1.5 py-0.2 font-bold">ACTIVE HARVEST</span>
+              </button>
+              <button type="button" onclick="changeFinancialYear('FY 2024-25')" id="fyBtn-FY 2024-25" class="fy-btn text-left px-3 py-2 bg-obsidian border border-obsidian-border text-parchment-muted hover:text-white flex items-center justify-between">
+                <span>FY 2024–25</span>
+                <span class="text-[10px] text-parchment-dark">Post-Budget 24</span>
+              </button>
+              <button type="button" onclick="changeFinancialYear('ALL')" id="fyBtn-ALL" class="fy-btn text-left px-3 py-2 bg-obsidian border border-obsidian-border text-parchment-muted hover:text-white flex items-center justify-between">
+                <span>Consolidated (All Years)</span>
+                <span class="text-[10px] text-parchment-dark">Audit View</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Tax Slab Selector -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-mono text-parchment-muted">INCOME TAX SLAB</label>
+              <span id="taxSlabValueDisplay" class="font-mono text-xs text-acid font-bold">30.0% (STCG)</span>
+            </div>
+            <input type="range" id="taxSlabSlider" min="20" max="39" step="1" value="30" oninput="updateTaxSlab(this.value)" class="w-full accent-acid cursor-pointer h-1 bg-obsidian-border">
+            <div class="grid grid-cols-3 gap-1 text-[11px] font-mono text-center">
+              <button onclick="setTaxSlabPreset(20)" class="py-1 bg-obsidian border border-obsidian-border hover:border-parchment-dark text-parchment-muted">20% Mid</button>
+              <button onclick="setTaxSlabPreset(30)" class="py-1 bg-obsidian border border-acid text-acid font-bold">30% HNI</button>
+              <button onclick="setTaxSlabPreset(39)" class="py-1 bg-obsidian border border-obsidian-border hover:border-parchment-dark text-parchment-muted">39% Max</button>
+            </div>
+          </div>
+
+          <!-- Rule 115 Telemetry Pill -->
+          <div class="p-3 bg-obsidian border border-obsidian-border font-mono text-xs space-y-1">
+            <div class="text-[10px] text-parchment-muted uppercase">RULE 115 SBI TT BENCHMARK</div>
+            <div class="flex items-baseline justify-between">
+              <span class="text-white font-bold text-sm" id="currentFxDisplay">₹88.75 / USD</span>
+              <span class="text-[10px] text-acid">PRECEDING MO-END</span>
+            </div>
+            <div class="text-[10px] text-parchment-dark pt-1 border-t border-obsidian-border flex justify-between">
+              <span>LTCG Rule: &gt;24m @ 12.5%</span>
+              <span>DTAA WHT: 25%</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Legal / Statutory Citation Footer -->
+      <div class="pt-4 border-t border-obsidian-border text-[10px] font-mono text-parchment-dark space-y-1">
+        <div>STATUTORY REFS:</div>
+        <div>• Sec 2(42A): Foreign Equity Holding Period</div>
+        <div>• Rule 115: SBI TT Buying Rate Mandate</div>
+        <div>• Sec 70: Inter-Source Loss Offset</div>
+        <div>• Sec 90 / Form 67: US DTAA FTC Relief</div>
+      </div>
+    </aside>
+
+    <!-- RIGHT MAIN CONTENT COMMAND CENTER -->
+    <main class="flex-1 p-4 lg:p-6 space-y-6 overflow-y-auto">
+      
+      <!-- TOP ASYMMETRIC FINANCIAL LEDGER & HERO STAT BAR -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+        
+        <!-- Hero Box: Pre-March 31 Tax Alpha Saved (5 cols) -->
+        <div class="md:col-span-5 bg-obsidian-surface border-2 border-acid p-5 flex flex-col justify-between relative overflow-hidden">
+          <div class="flex items-start justify-between">
+            <div>
+              <div class="flex items-center space-x-2">
+                <span class="w-2 h-2 bg-acid"></span>
+                <span class="font-mono text-xs uppercase tracking-widest text-acid font-bold">PRE-MARCH 31 TAX SAVINGS</span>
+              </div>
+              <h1 class="font-serif italic text-3xl lg:text-4xl text-white tracking-tight mt-1">
+                Alpha Harvester
+              </h1>
+            </div>
+            <span class="text-[10px] font-mono uppercase bg-acid text-black px-2 py-0.5 font-bold">
+              INDIAN FY DEADLINE
+            </span>
+          </div>
+
+          <div class="my-4">
+            <div class="flex items-baseline space-x-2">
+              <span id="statTaxSavedInr" class="font-mono text-4xl lg:text-5xl font-black text-acid tracking-tight">₹79,927</span>
+              <span class="font-mono text-xs text-parchment-muted uppercase">TAX ALPHA</span>
+            </div>
+            <p class="text-xs text-parchment-muted mt-1 font-mono">
+              From harvesting <span id="statHarvestLossInr" class="text-white font-bold">₹5,21,031</span> in eligible capital losses before March 31, 2026.
+            </p>
+          </div>
+
+          <div class="pt-3 border-t border-obsidian-border flex items-center justify-between text-xs font-mono">
+            <span class="text-parchment-muted">Offset Strategy:</span>
+            <span class="text-acid font-semibold">Wash-Sale Correlated Swap Matrix</span>
+          </div>
+        </div>
+
+        <!-- 3 Secondary Financial Data Blocks (7 cols) -->
+        <div class="md:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-3">
+          
+          <!-- Block 1: Total Portfolio Value -->
+          <div class="bg-obsidian-panel border border-obsidian-border p-4 flex flex-col justify-between">
+            <div class="flex items-center justify-between text-xs font-mono text-parchment-muted">
+              <span>PORTFOLIO VALUE</span>
+              <i data-lucide="wallet" class="w-3.5 h-3.5 text-parchment-dark"></i>
+            </div>
+            <div class="my-2">
+              <div id="statPortfolioUsd" class="font-mono text-xl lg:text-2xl font-bold text-white">$48,320.00</div>
+              <div id="statPortfolioInr" class="font-mono text-xs text-parchment-muted mt-0.5">₹42,88,400 INR</div>
+            </div>
+            <div class="text-[10px] font-mono text-acid pt-2 border-t border-obsidian-border">
+              11 ACTIVE OPEN LOTS
+            </div>
+          </div>
+
+          <!-- Block 2: Realized Gains -->
+          <div class="bg-obsidian-panel border border-obsidian-border p-4 flex flex-col justify-between">
+            <div class="flex items-center justify-between text-xs font-mono text-parchment-muted">
+              <span>REALIZED GAINS</span>
+              <i data-lucide="trending-up" class="w-3.5 h-3.5 text-parchment-dark"></i>
+            </div>
+            <div class="my-2">
+              <div id="statRealizedInr" class="font-mono text-xl lg:text-2xl font-bold text-white">₹4,21,996</div>
+              <div class="flex justify-between text-[10px] font-mono text-parchment-muted mt-0.5">
+                <span>STCG: <strong id="statStcgInr" class="text-white">₹2.38L</strong></span>
+                <span>LTCG: <strong id="statLtcgInr" class="text-white">₹1.84L</strong></span>
+              </div>
+            </div>
+            <div class="text-[10px] font-mono text-parchment-muted pt-2 border-t border-obsidian-border">
+              RULE 115 FIFO BASIS
+            </div>
+          </div>
+
+          <!-- Block 3: Estimated Tax -->
+          <div class="bg-obsidian-panel border border-obsidian-border p-4 flex flex-col justify-between">
+            <div class="flex items-center justify-between text-xs font-mono text-parchment-muted">
+              <span>ESTIMATED TAX</span>
+              <i data-lucide="scale" class="w-3.5 h-3.5 text-parchment-dark"></i>
+            </div>
+            <div class="my-2">
+              <div id="statTaxInr" class="font-mono text-xl lg:text-2xl font-bold text-alert-warn">₹94,463</div>
+              <div class="text-[10px] font-mono text-parchment-muted mt-0.5">
+                Effective: <strong id="statEffectiveTaxRate" class="text-white">22.4%</strong>
+              </div>
+            </div>
+            <div class="text-[10px] font-mono text-alert-loss pt-2 border-t border-obsidian-border">
+              BEFORE HARVEST OFFSET
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- MARCH 31 TAX-LOSS HARVESTER EXECUTION DESK -->
+      <section class="bg-obsidian-surface border border-obsidian-border">
+        
+        <!-- Execution Desk Header -->
+        <div class="p-4 border-b border-obsidian-border flex flex-wrap items-center justify-between gap-3 bg-obsidian-panel">
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="w-2 h-2 bg-acid"></span>
+              <span class="font-mono text-xs uppercase tracking-wider text-acid font-bold">ALGORITHMIC HARVEST ENGINE</span>
+              <span class="text-xs font-mono text-parchment-dark">// SEC 70 OFFSET</span>
+            </div>
+            <p class="text-xs font-mono text-parchment-muted mt-1">
+              Select loss positions to liquidate before March 31. Swap into correlated substitutes to keep portfolio exposure constant while capturing Indian tax alpha.
+            </p>
+          </div>
+
+          <!-- Dynamic Live Counter & Bulk Toggles -->
+          <div class="flex items-center space-x-3">
+            <div class="bg-obsidian border border-acid px-3 py-1.5 text-right font-mono">
+              <div class="text-[10px] text-parchment-muted uppercase">LIVE SIMULATED SAVINGS</div>
+              <div id="liveSimulatedTaxSaved" class="text-base font-bold text-acid">₹79,927.15</div>
+            </div>
+            <div class="flex space-x-1 font-mono text-xs">
+              <button onclick="toggleAllHarvest(true)" class="px-2.5 py-1.5 bg-obsidian-panel border border-obsidian-border hover:border-acid text-white text-xs">ALL</button>
+              <button onclick="toggleAllHarvest(false)" class="px-2.5 py-1.5 bg-obsidian-panel border border-obsidian-border hover:border-parchment-muted text-parchment-muted text-xs">NONE</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Harvest Candidates Ledger Table -->
+        <div class="overflow-x-auto custom-scrollbar">
+          <table class="w-full text-left text-xs font-mono">
+            <thead>
+              <tr class="border-b border-obsidian-border bg-obsidian text-parchment-muted uppercase text-[10px]">
+                <th class="py-2.5 px-3 w-8 text-center">EXEC</th>
+                <th class="py-2.5 px-3">POSITION</th>
+                <th class="py-2.5 px-3">ACQUISITION</th>
+                <th class="py-2.5 px-3 text-right">QTY & COST</th>
+                <th class="py-2.5 px-3 text-right">MKT PRICE</th>
+                <th class="py-2.5 px-3 text-right">UNREALIZED LOSS</th>
+                <th class="py-2.5 px-3">TERM</th>
+                <th class="py-2.5 px-3">WASH-SALE CORRELATED SWAP</th>
+                <th class="py-2.5 px-3 text-right text-acid font-bold">TAX SAVED (₹)</th>
+              </tr>
+            </thead>
+            <tbody id="harvestTableBody" class="divide-y divide-obsidian-border">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Terminal Command Strip -->
+        <div class="p-3 bg-obsidian border-t border-obsidian-border flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+          <div class="text-parchment-muted flex items-center gap-2">
+            <span class="text-acid font-bold">&gt;&gt;</span>
+            <span>All swaps avoid US 30-day identical asset wash sales (IRS Rev. Rul. 2008-5) while capturing Indian tax alpha under Sec 70.</span>
+          </div>
+          <button onclick="copyTradeInstructions()" class="px-3 py-1 bg-obsidian-panel hover:bg-obsidian-hover border border-obsidian-border hover:border-acid text-parchment hover:text-white transition flex items-center gap-1.5 text-xs">
+            <i data-lucide="copy" class="w-3.5 h-3.5 text-acid"></i>
+            <span>COPY SWAP TICKETS</span>
+          </button>
+        </div>
+
+      </section>
+
+      <!-- DUAL VISUAL TERMINAL: ASSET RETURN VS FX DRIFT & ALLOCATION -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        
+        <!-- Left Visual: Asset Alpha vs FX Rupee Drift (8 cols) -->
+        <div class="lg:col-span-8 bg-obsidian-surface border border-obsidian-border p-4 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between border-b border-obsidian-border pb-3 mb-3">
+              <div>
+                <span class="font-mono text-[10px] text-parchment-muted uppercase tracking-wider block">CHART // RETURN DECOMPOSITION</span>
+                <h3 class="text-sm font-bold text-white">Stock Alpha vs USD/INR Currency Drift</h3>
+              </div>
+              <div class="flex items-center space-x-3 text-xs font-mono">
+                <span class="flex items-center gap-1.5">
+                  <span class="w-2.5 h-2.5 bg-acid"></span> Stock Alpha ($)
+                </span>
+                <span class="flex items-center gap-1.5">
+                  <span class="w-2.5 h-2.5 bg-[#4A72FF]"></span> Rupee Drift (₹)
+                </span>
+              </div>
+            </div>
+
+            <div class="h-60 w-full relative">
+              <canvas id="fxDriftChart"></canvas>
+            </div>
+          </div>
+
+          <div class="mt-3 pt-3 border-t border-obsidian-border grid grid-cols-3 gap-2 text-center text-xs font-mono">
+            <div class="p-2 bg-obsidian border border-obsidian-border">
+              <div class="text-parchment-muted text-[10px]">AVG ENTRY FX</div>
+              <div id="chartAvgBuyFx" class="font-bold text-white">₹79.40</div>
+            </div>
+            <div class="p-2 bg-obsidian border border-obsidian-border">
+              <div class="text-parchment-muted text-[10px]">RULE 115 BENCHMARK</div>
+              <div id="chartCurrentFx" class="font-bold text-acid">₹88.75</div>
+            </div>
+            <div class="p-2 bg-obsidian border border-obsidian-border">
+              <div class="text-parchment-muted text-[10px]">FX DRIFT TAILWIND</div>
+              <div id="chartFxTailwind" class="font-bold text-[#4A72FF]">+11.77%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Visual: Allocation Matrix (4 cols) -->
+        <div class="lg:col-span-4 bg-obsidian-surface border border-obsidian-border p-4 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between border-b border-obsidian-border pb-3 mb-3">
+              <div>
+                <span class="font-mono text-[10px] text-parchment-muted uppercase tracking-wider block">ALLOCATION MATRIX</span>
+                <h3 class="text-sm font-bold text-white">Asset Weights</h3>
+              </div>
+              <span class="text-[10px] font-mono text-parchment-muted">USD MKT VAL</span>
+            </div>
+
+            <div class="h-60 relative flex items-center justify-center">
+              <canvas id="allocationChart"></canvas>
+            </div>
+          </div>
+
+          <div class="mt-3 pt-3 border-t border-obsidian-border text-[11px] font-mono text-parchment-muted text-center">
+            Broad index core with targeted semiconductor and AI holdings.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- MULTI-SCHEDULE AUDIT LEDGERS -->
+      <section class="bg-obsidian-surface border border-obsidian-border">
+        
+        <!-- Tab Navigation Bar -->
+        <div class="border-b border-obsidian-border bg-obsidian-panel px-4 flex flex-wrap items-center justify-between gap-2">
+          <div class="flex space-x-1 font-mono text-xs">
+            <button onclick="switchTab('tab-portfolio')" id="btn-tab-portfolio" class="tab-btn px-4 py-3 font-bold border-b-2 border-acid text-acid transition">
+              01 // OPEN LOTS & UNREALIZED MATRIX
+            </button>
+            <button onclick="switchTab('tab-realized')" id="btn-tab-realized" class="tab-btn px-4 py-3 font-medium border-b-2 border-transparent text-parchment-muted hover:text-white transition">
+              02 // REALIZED CAPITAL GAINS (FIFO)
+            </button>
+            <button onclick="switchTab('tab-dtaa')" id="btn-tab-dtaa" class="tab-btn px-4 py-3 font-medium border-b-2 border-transparent text-parchment-muted hover:text-white transition">
+              03 // DTAA ART 10 & FORM 67
+            </button>
+            <button onclick="switchTab('tab-schedule-fa')" id="btn-tab-schedule-fa" class="tab-btn px-4 py-3 font-medium border-b-2 border-transparent text-parchment-muted hover:text-white transition">
+              04 // SCHEDULE FA ITR-2 DISCLOSURE
+            </button>
+          </div>
+
+          <!-- Table Search -->
+          <div class="py-2">
+            <input type="text" id="tableSearchInput" oninput="filterActiveTable(this.value)" placeholder="FILTER TICKER..." class="bg-obsidian border border-obsidian-border text-xs px-3 py-1 font-mono text-white placeholder-parchment-dark focus:outline-none focus:border-acid w-40">
+          </div>
+        </div>
+
+        <!-- TAB 1: OPEN POSITIONS & LOTS -->
+        <div id="tab-portfolio" class="tab-content p-4">
+          <div class="overflow-x-auto custom-scrollbar">
+            <table class="w-full text-left text-xs font-mono">
+              <thead>
+                <tr class="border-b border-obsidian-border bg-obsidian text-parchment-muted uppercase text-[10px]">
+                  <th class="py-2.5 px-3">LOT ID</th>
+                  <th class="py-2.5 px-3">TICKER</th>
+                  <th class="py-2.5 px-3">ACQUIRED</th>
+                  <th class="py-2.5 px-3 text-right">QUANTITY</th>
+                  <th class="py-2.5 px-3 text-right">BUY PRICE</th>
+                  <th class="py-2.5 px-3 text-right">CURRENT PRICE</th>
+                  <th class="py-2.5 px-3 text-right">COST BASIS (₹)</th>
+                  <th class="py-2.5 px-3 text-right">MARKET VAL (₹)</th>
+                  <th class="py-2.5 px-3 text-right">UNREALIZED P&L</th>
+                  <th class="py-2.5 px-3 text-center">HOLDING</th>
+                  <th class="py-2.5 px-3 text-center">CLASSIFICATION</th>
+                </tr>
+              </thead>
+              <tbody id="openPositionsTableBody" class="divide-y divide-obsidian-border">
+                <!-- Rendered via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB 2: REALIZED GAINS (FIFO) -->
+        <div id="tab-realized" class="tab-content hidden p-4">
+          <div class="overflow-x-auto custom-scrollbar">
+            <table class="w-full text-left text-xs font-mono">
+              <thead>
+                <tr class="border-b border-obsidian-border bg-obsidian text-parchment-muted uppercase text-[10px]">
+                  <th class="py-2.5 px-3">FY / CY</th>
+                  <th class="py-2.5 px-3">TICKER</th>
+                  <th class="py-2.5 px-3">BUY DATE</th>
+                  <th class="py-2.5 px-3">SELL DATE</th>
+                  <th class="py-2.5 px-3 text-right">QTY</th>
+                  <th class="py-2.5 px-3 text-right">BUY FX</th>
+                  <th class="py-2.5 px-3 text-right">SELL FX</th>
+                  <th class="py-2.5 px-3 text-right">GAIN ($)</th>
+                  <th class="py-2.5 px-3 text-right text-acid font-bold">GAIN (₹)</th>
+                  <th class="py-2.5 px-3 text-center">TERM</th>
+                  <th class="py-2.5 px-3 text-right">RATE</th>
+                  <th class="py-2.5 px-3 text-right text-alert-warn">EST TAX (₹)</th>
+                </tr>
+              </thead>
+              <tbody id="realizedTableBody" class="divide-y divide-obsidian-border">
+                <!-- Rendered via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB 3: DTAA & FORM 67 -->
+        <div id="tab-dtaa" class="tab-content hidden p-4">
+          <div class="p-3 bg-obsidian border border-obsidian-border text-xs font-mono text-parchment-muted mb-3 flex items-center justify-between">
+            <span>DTAA ARTICLE 10: 25% US Withholding on dividends is credited under Section 90 via Form 67.</span>
+            <span class="text-acid font-bold">SCHEDULE FSI</span>
+          </div>
+          <div class="overflow-x-auto custom-scrollbar">
+            <table class="w-full text-left text-xs font-mono">
+              <thead>
+                <tr class="border-b border-obsidian-border bg-obsidian text-parchment-muted uppercase text-[10px]">
+                  <th class="py-2.5 px-3">DATE</th>
+                  <th class="py-2.5 px-3">TICKER</th>
+                  <th class="py-2.5 px-3 text-right">GROSS ($)</th>
+                  <th class="py-2.5 px-3 text-right text-alert-warn">US WHT (25% $)</th>
+                  <th class="py-2.5 px-3 text-right">RULE 115 RATE</th>
+                  <th class="py-2.5 px-3 text-right">GROSS (₹)</th>
+                  <th class="py-2.5 px-3 text-right text-alert-warn">US WHT (₹)</th>
+                  <th class="py-2.5 px-3 text-right">INDIAN TAX (₹)</th>
+                  <th class="py-2.5 px-3 text-right text-acid font-bold">FTC RELIEF (₹)</th>
+                  <th class="py-2.5 px-3 text-center">STATUS</th>
+                </tr>
+              </thead>
+              <tbody id="dtaaTableBody" class="divide-y divide-obsidian-border">
+                <!-- Rendered via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB 4: SCHEDULE FA -->
+        <div id="tab-schedule-fa" class="tab-content hidden p-4">
+          <div class="p-3 bg-obsidian border border-obsidian-border text-xs font-mono text-parchment-muted mb-3 flex items-center justify-between">
+            <span>SCHEDULE FA (TABLE A3): Mandatory disclosure of foreign listed equities to avoid Section 43 Black Money penalties.</span>
+            <span class="text-white font-bold">ITR-2 COMPLIANT</span>
+          </div>
+          <div class="overflow-x-auto custom-scrollbar">
+            <table class="w-full text-left text-xs font-mono">
+              <thead>
+                <tr class="border-b border-obsidian-border bg-obsidian text-parchment-muted uppercase text-[10px]">
+                  <th class="py-2.5 px-3">TICKER</th>
+                  <th class="py-2.5 px-3">COUNTRY</th>
+                  <th class="py-2.5 px-3">ENTITY</th>
+                  <th class="py-2.5 px-3 text-right">TOTAL COST ($)</th>
+                  <th class="py-2.5 px-3 text-right">PEAK VALUE ($)</th>
+                  <th class="py-2.5 px-3 text-right">CLOSING VAL ($)</th>
+                  <th class="py-2.5 px-3 text-right text-white font-bold">CLOSING VAL (₹)</th>
+                  <th class="py-2.5 px-3 text-center">SCHEDULE STATUS</th>
+                </tr>
+              </thead>
+              <tbody id="scheduleFaTableBody" class="divide-y divide-obsidian-border">
+                <!-- Rendered via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none font-mono"></div>
+
+  <!-- CLIENT-SIDE CONTROLLER & CHART.JS CODE -->
+  <script>
+    let currentAnalysis = null;
+    let selectedTaxSlab = 30.0;
+    let activeFinancialYear = "FY 2025-26";
+    let fxDriftChartInstance = null;
+    let allocationChartInstance = null;
+    let toggledHarvestLots = new Set();
+
+    // High fidelity fallback state for instant zero-latency terminal experience
+    const FALLBACK_DATA = {
+      portfolio_totals: {
+        current_val_usd: 48320.00,
+        current_val_inr: 4288400.00,
+        unrealized_pnl_usd: -2410.50,
+        unrealized_pnl_inr: -213931.88,
+        open_lots_count: 11,
+        current_fx_rate: 88.75
+      },
+      fy_summary: {
+        "FY 2023-24": { stcg_gain_inr: 164874.95, ltcg_gain_inr: 0.0, total_gain_inr: 164874.95, stcg_tax_inr: 49462.48, ltcg_tax_inr: 0.0, total_tax_inr: 49462.48, gain_usd: 1157.90, trades_count: 1 },
+        "FY 2024-25": { stcg_gain_inr: 73488.20, ltcg_gain_inr: 129625.85, total_gain_inr: 203114.05, stcg_tax_inr: 22046.46, ltcg_tax_inr: 16203.23, total_tax_inr: 38249.69, gain_usd: 1815.87, trades_count: 3 },
+        "FY 2025-26": { stcg_gain_inr: 0.0, ltcg_gain_inr: 54007.93, total_gain_inr: 54007.93, stcg_tax_inr: 0.0, ltcg_tax_inr: 6750.99, total_tax_inr: 6750.99, gain_usd: 438.80, trades_count: 1 }
+      },
+      realized_trades: [
+        { symbol: "VOO", asset_type: "ETF", quantity: 20, buy_date: "2022-01-14", sell_date: "2024-03-10", holding_days: 786, holding_months: 25.8, term: "LTCG", buy_price_usd: 410.0, sell_price_usd: 468.0, buy_fx_rate: 74.5, sell_fx_rate: 82.9, gain_usd: 1157.0, gain_inr: 164874.95, tax_rate_pct: 12.5, estimated_tax_inr: 20609.37, indian_fy: "FY 2023-24", us_cy: "CY 2024", asset_gain_usd: 1160.0, fx_gain_inr: 68880.0 },
+        { symbol: "NVDA", asset_type: "EQUITY", quantity: 40, buy_date: "2022-10-18", sell_date: "2024-08-25", holding_days: 677, holding_months: 22.2, term: "STCG", buy_price_usd: 120.0, sell_price_usd: 128.0, buy_fx_rate: 81.35, sell_fx_rate: 83.85, gain_usd: 318.0, gain_inr: 38784.80, tax_rate_pct: 30.0, estimated_tax_inr: 11635.44, indian_fy: "FY 2024-25", us_cy: "CY 2024", asset_gain_usd: 320.0, fx_gain_inr: 12000.0 },
+        { symbol: "AAPL", asset_type: "EQUITY", quantity: 20, buy_date: "2022-03-22", sell_date: "2024-11-12", holding_days: 966, holding_months: 31.7, term: "LTCG", buy_price_usd: 165.0, sell_price_usd: 225.0, buy_fx_rate: 75.3, sell_fx_rate: 84.05, gain_usd: 1198.0, gain_inr: 129625.85, tax_rate_pct: 12.5, estimated_tax_inr: 16203.23, indian_fy: "FY 2024-25", us_cy: "CY 2024", asset_gain_usd: 1200.0, fx_gain_inr: 28875.0 },
+        { symbol: "GOOGL", asset_type: "EQUITY", quantity: 20, buy_date: "2024-05-18", sell_date: "2025-02-20", holding_days: 278, holding_months: 9.1, term: "STCG", buy_price_usd: 175.0, sell_price_usd: 190.0, buy_fx_rate: 83.4, sell_fx_rate: 86.2, gain_usd: 298.0, gain_inr: 34703.40, tax_rate_pct: 30.0, estimated_tax_inr: 10411.02, indian_fy: "FY 2024-25", us_cy: "CY 2025", asset_gain_usd: 300.0, fx_gain_inr: 9800.0 },
+        { symbol: "NVDA", asset_type: "EQUITY", quantity: 20, buy_date: "2022-10-18", sell_date: "2025-10-10", holding_days: 1088, holding_months: 35.7, term: "LTCG", buy_price_usd: 120.0, sell_price_usd: 142.0, buy_fx_rate: 81.35, sell_fx_rate: 87.8, gain_usd: 438.8, gain_inr: 54007.93, tax_rate_pct: 12.5, estimated_tax_inr: 6750.99, indian_fy: "FY 2025-26", us_cy: "CY 2025", asset_gain_usd: 440.0, fx_gain_inr: 15480.0 }
+      ],
+      tax_loss_harvest: {
+        total_candidates: 5,
+        total_harvestable_loss_usd: 5870.00,
+        total_harvestable_loss_inr: 521030.63,
+        total_potential_tax_saved_inr: 79927.15,
+        candidates: [
+          {
+            lot_id: "BUY-2023-07-20-AMD-1", symbol: "AMD", asset_type: "EQUITY", buy_date: "2023-07-20", quantity: 80,
+            buy_price_usd: 175.00, current_price_usd: 118.25, loss_usd: 4540.00, loss_inr: 402925.00, loss_pct: 32.4,
+            term: "LTCG", applicable_tax_rate: 12.5, potential_tax_saved_inr: 50365.63,
+            swap: { primary_substitute: "SMH", substitute_name: "VanEck Semiconductor ETF", correlation: 0.842, rationale: "Maintains high-beta semiconductor tailwind with diversified basket." },
+            action_recommendation: "SELL 80 AMD @ ~$118.25 & SWAP -> SMH (VanEck Semiconductor ETF)",
+            selected_by_default: true
+          },
+          {
+            lot_id: "BUY-2023-11-05-TSLA-1", symbol: "TSLA", asset_type: "EQUITY", buy_date: "2023-11-05", quantity: 50,
+            buy_price_usd: 255.00, current_price_usd: 210.50, loss_usd: 2225.00, loss_inr: 197468.75, loss_pct: 17.5,
+            term: "LTCG", applicable_tax_rate: 12.5, potential_tax_saved_inr: 24683.59,
+            swap: { primary_substitute: "ARKK", substitute_name: "ARK Innovation ETF", correlation: 0.785, rationale: "High TSLA portfolio weighting and disruptive tech beta." },
+            action_recommendation: "SELL 50 TSLA @ ~$210.50 & SWAP -> ARKK",
+            selected_by_default: true
+          },
+          {
+            lot_id: "BUY-2025-12-05-AMD-2", symbol: "AMD", asset_type: "EQUITY", buy_date: "2025-12-05", quantity: 30,
+            buy_price_usd: 150.00, current_price_usd: 118.25, loss_usd: 952.50, loss_inr: 84534.38, loss_pct: 21.2,
+            term: "STCG", applicable_tax_rate: 30.0, potential_tax_saved_inr: 25360.31,
+            swap: { primary_substitute: "NVDA", substitute_name: "NVIDIA Corporation", correlation: 0.825, rationale: "Market leader in enterprise AI & GPUs." },
+            action_recommendation: "SELL 30 AMD @ ~$118.25 & SWAP -> NVDA",
+            selected_by_default: true
+          },
+          {
+            lot_id: "BUY-2025-01-15-VOO-2", symbol: "VOO", asset_type: "ETF", buy_date: "2025-01-15", quantity: 15,
+            buy_price_usd: 540.00, current_price_usd: 515.20, loss_usd: 372.00, loss_inr: 33015.00, loss_pct: 4.6,
+            term: "STCG", applicable_tax_rate: 30.0, potential_tax_saved_inr: 9904.50,
+            swap: { primary_substitute: "IVV", substitute_name: "iShares Core S&P 500 ETF", correlation: 0.999, rationale: "Direct S&P 500 substitute; identical index tracking without triggering US wash-sale rules." },
+            action_recommendation: "SELL 15 VOO @ ~$515.20 & SWAP -> IVV (iShares Core S&P 500 ETF)",
+            selected_by_default: true
+          },
+          {
+            lot_id: "BUY-2025-05-10-QQQ-2", symbol: "QQQ", asset_type: "ETF", buy_date: "2025-05-10", quantity: 20,
+            buy_price_usd: 490.00, current_price_usd: 478.50, loss_usd: 230.00, loss_inr: 20412.50, loss_pct: 2.3,
+            term: "STCG", applicable_tax_rate: 30.0, potential_tax_saved_inr: 6123.75,
+            swap: { primary_substitute: "QQQM", substitute_name: "Invesco NASDAQ 100 ETF", correlation: 0.999, rationale: "Identical NASDAQ-100 holdings with lower expense ratio, clean substitute." },
+            action_recommendation: "SELL 20 QQQ @ ~$478.50 & SWAP -> QQQM",
+            selected_by_default: true
+          }
+        ]
+      },
+      dividends: [
+        { date: "2022-06-15", symbol: "VOO", gross_div_usd: 65.0, withholding_usd: 16.25, net_div_usd: 48.75, fx_rate: 77.6, gross_div_inr: 5044.0, withholding_inr: 1261.0, ftc_eligible_inr: 1261.0, indian_tax_inr: 1513.2, net_tax_payable_inr: 252.2, indian_fy: "FY 2022-23" },
+        { date: "2023-09-15", symbol: "AAPL", gross_div_usd: 14.4, withholding_usd: 3.6, net_div_usd: 10.8, fx_rate: 82.7, gross_div_inr: 1190.88, withholding_inr: 297.72, ftc_eligible_inr: 297.72, indian_tax_inr: 357.26, net_tax_payable_inr: 59.54, indian_fy: "FY 2023-24" },
+        { date: "2024-06-20", symbol: "MSFT", gross_div_usd: 30.0, withholding_usd: 7.5, net_div_usd: 22.5, fx_rate: 83.3, gross_div_inr: 2499.0, withholding_inr: 624.75, ftc_eligible_inr: 624.75, indian_tax_inr: 749.7, net_tax_payable_inr: 124.95, indian_fy: "FY 2024-25" },
+        { date: "2025-07-15", symbol: "VOO", gross_div_usd: 81.0, withholding_usd: 20.25, net_div_usd: 60.75, fx_rate: 87.4, gross_div_inr: 7079.4, withholding_inr: 1769.85, ftc_eligible_inr: 1769.85, indian_tax_inr: 2123.82, net_tax_payable_inr: 353.97, indian_fy: "FY 2025-26" },
+        { date: "2026-01-20", symbol: "QQQ", gross_div_usd: 45.5, withholding_usd: 11.38, net_div_usd: 34.12, fx_rate: 88.2, gross_div_inr: 4013.1, withholding_inr: 1003.72, ftc_eligible_inr: 1003.72, indian_tax_inr: 1203.93, net_tax_payable_inr: 200.21, indian_fy: "FY 2025-26" }
+      ],
+      open_positions: [
+        { lot_id: "VOO-L1", symbol: "VOO", asset_type: "ETF", buy_date: "2022-01-14", quantity: 30, buy_price_usd: 410.0, current_price_usd: 515.2, buy_fx_rate: 74.5, current_fx_rate: 88.75, cost_basis_inr: 916350, current_val_inr: 1371666, unrealized_pnl_inr: 455316, unrealized_pnl_usd: 3156.0, unrealized_pnl_pct: 25.7, holding_days: 1530, term: "LTCG", is_loss: false },
+        { lot_id: "VOO-L2", symbol: "VOO", asset_type: "ETF", buy_date: "2025-01-15", quantity: 15, buy_price_usd: 540.0, current_price_usd: 515.2, buy_fx_rate: 84.85, current_fx_rate: 88.75, cost_basis_inr: 687285, current_val_inr: 685833, unrealized_pnl_inr: -33015, unrealized_pnl_usd: -372.0, unrealized_pnl_pct: -4.6, holding_days: 434, term: "STCG", is_loss: true },
+        { lot_id: "AAPL-L1", symbol: "AAPL", asset_type: "EQUITY", buy_date: "2022-03-22", quantity: 40, buy_price_usd: 165.0, current_price_usd: 228.4, buy_fx_rate: 75.3, current_fx_rate: 88.75, cost_basis_inr: 496980, current_val_inr: 810819, unrealized_pnl_inr: 313839, unrealized_pnl_usd: 2536.0, unrealized_pnl_pct: 38.4, holding_days: 1464, term: "LTCG", is_loss: false },
+        { lot_id: "NVDA-L1", symbol: "NVDA", asset_type: "EQUITY", buy_date: "2022-10-18", quantity: 40, buy_price_usd: 120.0, current_price_usd: 126.5, buy_fx_rate: 81.35, current_fx_rate: 88.75, cost_basis_inr: 390480, current_val_inr: 449075, unrealized_pnl_inr: 58595, unrealized_pnl_usd: 260.0, unrealized_pnl_pct: 5.4, holding_days: 1254, term: "LTCG", is_loss: false },
+        { lot_id: "MSFT-L1", symbol: "MSFT", asset_type: "EQUITY", buy_date: "2023-02-10", quantity: 40, buy_price_usd: 260.0, current_price_usd: 412.0, buy_fx_rate: 81.8, current_fx_rate: 88.75, cost_basis_inr: 850720, current_val_inr: 1462600, unrealized_pnl_inr: 611880, unrealized_pnl_usd: 6080.0, unrealized_pnl_pct: 58.5, holding_days: 1139, term: "LTCG", is_loss: false },
+        { lot_id: "QQQ-L1", symbol: "QQQ", asset_type: "ETF", buy_date: "2023-04-12", quantity: 45, buy_price_usd: 315.0, current_price_usd: 478.5, buy_fx_rate: 82.15, current_fx_rate: 88.75, cost_basis_inr: 1164476, current_val_inr: 1910606, unrealized_pnl_inr: 746130, unrealized_pnl_usd: 7357.5, unrealized_pnl_pct: 51.9, holding_days: 1078, term: "LTCG", is_loss: false },
+        { lot_id: "QQQ-L2", symbol: "QQQ", asset_type: "ETF", buy_date: "2025-05-10", quantity: 20, buy_price_usd: 490.0, current_price_usd: 478.5, buy_fx_rate: 87.1, current_fx_rate: 88.75, cost_basis_inr: 853580, current_val_inr: 849337, unrealized_pnl_inr: -20412, unrealized_pnl_usd: -230.0, unrealized_pnl_pct: -2.3, holding_days: 319, term: "STCG", is_loss: true },
+        { lot_id: "AMD-L1", symbol: "AMD", asset_type: "EQUITY", buy_date: "2023-07-20", quantity: 80, buy_price_usd: 175.0, current_price_usd: 118.25, buy_fx_rate: 82.05, current_fx_rate: 88.75, cost_basis_inr: 1148700, current_val_inr: 839575, unrealized_pnl_inr: -402925, unrealized_pnl_usd: -4540.0, unrealized_pnl_pct: -32.4, holding_days: 979, term: "LTCG", is_loss: true },
+        { lot_id: "AMD-L2", symbol: "AMD", asset_type: "EQUITY", buy_date: "2025-12-05", quantity: 30, buy_price_usd: 150.0, current_price_usd: 118.25, buy_fx_rate: 88.15, current_fx_rate: 88.75, cost_basis_inr: 396675, current_val_inr: 314812, unrealized_pnl_inr: -84534, unrealized_pnl_usd: -952.5, unrealized_pnl_pct: -21.2, holding_days: 110, term: "STCG", is_loss: true },
+        { lot_id: "TSLA-L1", symbol: "TSLA", asset_type: "EQUITY", buy_date: "2023-11-05", quantity: 50, buy_price_usd: 255.0, current_price_usd: 210.5, buy_fx_rate: 83.25, current_fx_rate: 88.75, cost_basis_inr: 1061437, current_val_inr: 934093, unrealized_pnl_inr: -197468, unrealized_pnl_usd: -2225.0, unrealized_pnl_pct: -17.5, holding_days: 871, term: "LTCG", is_loss: true },
+        { lot_id: "GOOGL-L1", symbol: "GOOGL", asset_type: "EQUITY", buy_date: "2024-05-18", quantity: 30, buy_price_usd: 175.0, current_price_usd: 182.1, buy_fx_rate: 83.4, current_fx_rate: 88.75, cost_basis_inr: 437850, current_val_inr: 484841, unrealized_pnl_inr: 46991, unrealized_pnl_usd: 213.0, unrealized_pnl_pct: 4.1, holding_days: 676, term: "STCG", is_loss: false }
+      ]
+    };
+
+    // Formatters
+    const fmtInr = (n) => '₹' + Math.round(n || 0).toLocaleString('en-IN');
+    const fmtUsd = (n) => '$' + Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const fmtPct = (n) => (n >= 0 ? '+' : '') + Number(n || 0).toFixed(1) + '%';
+
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+      setupDragAndDrop();
+      checkServerHealth();
+      loadSamplePortfolio();
+    });
+
+    async function checkServerHealth() {
+      try {
+        const res = await fetch('/api/health');
+        if (res.ok) {
+          const data = await res.json();
+          document.getElementById('serverStatusText').innerText = `SYS.ONLINE (${data.version})`;
+        }
+      } catch (err) {
+        document.getElementById('serverStatusText').innerText = "SYS.CLIENT_FALLBACK";
+      }
+    }
+
+    async function loadSamplePortfolio() {
+      showToast("INGESTING DATA: RUNNING DUAL-CALENDAR ENGINE...", "info");
+      try {
+        const res = await fetch(`/api/sample?tax_slab=${selectedTaxSlab}&fy=${activeFinancialYear}`);
+        if (!res.ok) throw new Error("API response error");
+        const json = await res.json();
+        if (json.success && json.data) {
+          currentAnalysis = json.data;
+          document.getElementById('activeSourceBadge').innerText = json.source;
+          document.getElementById('tradesCountDisplay').innerText = `${json.data.total_trades_ingested || 21} Orders`;
+          renderAll();
+          showToast("SAMPLE PORTFOLIO COMPILED ACCURATELY", "success");
+          return;
+        }
+      } catch (e) {
+        console.warn("Using offline fallback engine data:", e);
+      }
+      currentAnalysis = FALLBACK_DATA;
+      renderAll();
+    }
+
+    function renderAll() {
+      if (!currentAnalysis) return;
+      recalculateHarvestSet();
+      renderKpis();
+      renderHarvesterTable();
+      renderCharts();
+      renderTables();
+      lucide.createIcons();
+    }
+
+    function recalculateHarvestSet() {
+      const candidates = currentAnalysis?.tax_loss_harvest?.candidates || [];
+      toggledHarvestLots.clear();
+      candidates.forEach(c => toggledHarvestLots.add(c.lot_id));
+      updateLiveTaxSavedCounter();
+    }
+
+    function updateLiveTaxSavedCounter() {
+      const candidates = currentAnalysis?.tax_loss_harvest?.candidates || [];
+      let totalTaxSaved = 0;
+      let totalLossInr = 0;
+
+      candidates.forEach(c => {
+        if (toggledHarvestLots.has(c.lot_id)) {
+          const rate = c.term === 'STCG' ? selectedTaxSlab : 12.5;
+          const saved = c.loss_inr * (rate / 100.0);
+          totalTaxSaved += saved;
+          totalLossInr += c.loss_inr;
+        }
+      });
+
+      document.getElementById('liveSimulatedTaxSaved').innerText = fmtInr(totalTaxSaved);
+      document.getElementById('statTaxSavedInr').innerText = fmtInr(totalTaxSaved);
+      document.getElementById('statHarvestLossInr').innerText = fmtInr(totalLossInr);
+    }
+
+    function toggleHarvestCandidate(lotId, checked) {
+      if (checked) toggledHarvestLots.add(lotId);
+      else toggledHarvestLots.delete(lotId);
+      updateLiveTaxSavedCounter();
+    }
+
+    function toggleAllHarvest(forceState) {
+      const candidates = currentAnalysis?.tax_loss_harvest?.candidates || [];
+      candidates.forEach(c => {
+        const cb = document.getElementById(`cb-${c.lot_id}`);
+        if (cb) cb.checked = forceState;
+        if (forceState) toggledHarvestLots.add(c.lot_id);
+        else toggledHarvestLots.delete(c.lot_id);
+      });
+      updateLiveTaxSavedCounter();
+    }
+
+    function renderKpis() {
+      const totals = currentAnalysis.portfolio_totals || {};
+      const realized = currentAnalysis.realized_trades || [];
+
+      let filteredRealized = realized;
+      if (activeFinancialYear !== "ALL") {
+        filteredRealized = realized.filter(t => t.indian_fy === activeFinancialYear);
+      }
+
+      const stcg = filteredRealized.filter(t => t.term === "STCG").reduce((acc, t) => acc + t.gain_inr, 0);
+      const ltcg = filteredRealized.filter(t => t.term === "LTCG").reduce((acc, t) => acc + t.gain_inr, 0);
+      const totalGain = stcg + ltcg;
+
+      const stcgTax = stcg * (selectedTaxSlab / 100.0);
+      const ltcgTax = ltcg * 0.125;
+      const totalTax = Math.max(0, stcgTax + ltcgTax);
+      const effectiveRate = totalGain > 0 ? ((totalTax / totalGain) * 100.0).toFixed(1) + '%' : '0.0%';
+
+      document.getElementById('statPortfolioUsd').innerText = fmtUsd(totals.current_val_usd);
+      document.getElementById('statPortfolioInr').innerText = fmtInr(totals.current_val_inr);
+      document.getElementById('statRealizedInr').innerText = fmtInr(totalGain);
+      document.getElementById('statStcgInr').innerText = fmtInr(stcg);
+      document.getElementById('statLtcgInr').innerText = fmtInr(ltcg);
+      document.getElementById('statTaxInr').innerText = fmtInr(totalTax);
+      document.getElementById('statEffectiveTaxRate').innerText = effectiveRate;
+      document.getElementById('currentFxDisplay').innerText = `₹${(totals.current_fx_rate || 88.75).toFixed(2)} / USD`;
+    }
+
+    function renderHarvesterTable() {
+      const tbody = document.getElementById('harvestTableBody');
+      const candidates = currentAnalysis?.tax_loss_harvest?.candidates || [];
+
+      if (!candidates.length) {
+        tbody.innerHTML = `<tr><td colspan="9" class="py-6 text-center text-parchment-muted">No unrealized loss positions found. Entire portfolio is in profit.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = candidates.map(c => {
+        const isChecked = toggledHarvestLots.has(c.lot_id);
+        const rate = c.term === 'STCG' ? selectedTaxSlab : 12.5;
+        const taxSaved = c.loss_inr * (rate / 100.0);
+        const swap = c.swap || {};
+        const subSym = swap.primary_substitute || 'ETF';
+
+        return `
+          <tr class="hover:bg-obsidian-hover transition">
+            <td class="py-2.5 px-3 text-center">
+              <input type="checkbox" id="cb-${c.lot_id}" ${isChecked ? 'checked' : ''} onchange="toggleHarvestCandidate('${c.lot_id}', this.checked)" class="w-3.5 h-3.5 accent-acid cursor-pointer">
+            </td>
+            <td class="py-2.5 px-3">
+              <span class="font-bold text-white">${c.symbol}</span>
+              <span class="text-[10px] text-parchment-dark block">${c.lot_id}</span>
+            </td>
+            <td class="py-2.5 px-3 text-parchment-muted">${c.buy_date}</td>
+            <td class="py-2.5 px-3 text-right">
+              <div class="text-white">${c.quantity} shs</div>
+              <div class="text-[10px] text-parchment-dark">@ ${fmtUsd(c.buy_price_usd)}</div>
+            </td>
+            <td class="py-2.5 px-3 text-right text-white">
+              ${fmtUsd(c.current_price_usd)}
+            </td>
+            <td class="py-2.5 px-3 text-right">
+              <div class="text-alert-loss font-bold">-${fmtInr(c.loss_inr)}</div>
+              <div class="text-[10px] text-alert-loss/80">-${fmtUsd(c.loss_usd)} (${c.loss_pct.toFixed(1)}%)</div>
+            </td>
+            <td class="py-2.5 px-3">
+              <span class="px-1.5 py-0.5 text-[10px] ${c.term === 'STCG' ? 'border border-alert-warn text-alert-warn' : 'border border-parchment-muted text-parchment-muted'}">
+                ${c.term} (${rate}%)
+              </span>
+            </td>
+            <td class="py-2.5 px-3">
+              <div class="flex items-center space-x-1.5">
+                <span class="text-parchment-muted text-[10px]">SWAP:</span>
+                <span class="px-1.5 py-0.2 font-bold bg-acid text-black text-[10px]">
+                  ${subSym}
+                </span>
+                <span class="text-[10px] text-parchment-dark">ρ=${swap.correlation || 0.95}</span>
+              </div>
+              <div class="text-[10px] text-parchment-dark truncate max-w-xs mt-0.5" title="${swap.rationale || ''}">
+                ${swap.rationale || 'Preserves asset allocation'}
+              </div>
+            </td>
+            <td class="py-2.5 px-3 text-right font-bold text-acid text-sm">
+              +${fmtInr(taxSaved)}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderTables() {
+      // 1. Open Positions
+      const openTbody = document.getElementById('openPositionsTableBody');
+      const openLots = currentAnalysis.open_positions || [];
+      openTbody.innerHTML = openLots.map(lot => {
+        const pnlClass = lot.unrealized_pnl_inr >= 0 ? 'text-alert-gain' : 'text-alert-loss';
+        return `
+          <tr class="hover:bg-obsidian-hover transition">
+            <td class="py-2 px-3 text-parchment-dark text-[10px]">${lot.lot_id}</td>
+            <td class="py-2 px-3 font-bold text-white">${lot.symbol}</td>
+            <td class="py-2 px-3 text-parchment-muted">${lot.buy_date}</td>
+            <td class="py-2 px-3 text-right text-white">${lot.quantity}</td>
+            <td class="py-2 px-3 text-right text-parchment-muted">${fmtUsd(lot.buy_price_usd)}</td>
+            <td class="py-2 px-3 text-right text-white">${fmtUsd(lot.current_price_usd)}</td>
+            <td class="py-2 px-3 text-right text-parchment-muted">${fmtInr(lot.cost_basis_inr)}</td>
+            <td class="py-2 px-3 text-right text-white font-semibold">${fmtInr(lot.current_val_inr)}</td>
+            <td class="py-2 px-3 text-right font-bold ${pnlClass}">
+              ${fmtInr(lot.unrealized_pnl_inr)}
+              <span class="text-[10px] block opacity-80">${fmtPct(lot.unrealized_pnl_pct)}</span>
+            </td>
+            <td class="py-2 px-3 text-center text-parchment-dark text-[10px]">
+              ${lot.holding_days}d (${(lot.holding_days / 30.4).toFixed(1)}m)
+            </td>
+            <td class="py-2 px-3 text-center">
+              <span class="px-1.5 py-0.2 text-[10px] ${lot.is_loss ? 'border border-alert-loss text-alert-loss' : 'border border-alert-gain text-alert-gain'}">
+                ${lot.is_loss ? 'LOSS (HARVESTABLE)' : 'PROFIT'}
+              </span>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      // 2. Realized Trades
+      const realTbody = document.getElementById('realizedTableBody');
+      const realized = currentAnalysis.realized_trades || [];
+      let filteredRealized = realized;
+      if (activeFinancialYear !== "ALL") {
+        filteredRealized = realized.filter(t => t.indian_fy === activeFinancialYear);
+      }
+
+      if (!filteredRealized.length) {
+        realTbody.innerHTML = `<tr><td colspan="12" class="py-6 text-center text-parchment-dark font-mono">No realized transactions logged in ${activeFinancialYear}.</td></tr>`;
+      } else {
+        realTbody.innerHTML = filteredRealized.map(t => {
+          const rate = t.term === 'STCG' ? selectedTaxSlab : 12.5;
+          const tax = t.gain_inr * (rate / 100.0);
+          return `
+            <tr class="hover:bg-obsidian-hover transition">
+              <td class="py-2 px-3">
+                <span class="text-white font-semibold">${t.indian_fy}</span>
+                <span class="text-[10px] text-parchment-dark block">${t.us_cy}</span>
+              </td>
+              <td class="py-2 px-3 font-bold text-white">${t.symbol}</td>
+              <td class="py-2 px-3 text-parchment-muted">${t.buy_date}</td>
+              <td class="py-2 px-3 text-parchment-muted">${t.sell_date}</td>
+              <td class="py-2 px-3 text-right text-white">${t.quantity}</td>
+              <td class="py-2 px-3 text-right text-parchment-muted">₹${t.buy_fx_rate}</td>
+              <td class="py-2 px-3 text-right text-acid font-bold">₹${t.sell_fx_rate}</td>
+              <td class="py-2 px-3 text-right text-parchment-muted">${fmtUsd(t.gain_usd)}</td>
+              <td class="py-2 px-3 text-right font-bold text-white">${fmtInr(t.gain_inr)}</td>
+              <td class="py-2 px-3 text-center">
+                <span class="px-1.5 py-0.2 text-[10px] border ${t.term === 'STCG' ? 'border-alert-warn text-alert-warn' : 'border-parchment-muted text-parchment-muted'}">
+                  ${t.term}
+                </span>
+              </td>
+              <td class="py-2 px-3 text-right text-parchment-muted">${rate}%</td>
+              <td class="py-2 px-3 text-right font-semibold text-alert-warn">${fmtInr(tax)}</td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // 3. DTAA Dividends
+      const dtaaTbody = document.getElementById('dtaaTableBody');
+      const dividends = currentAnalysis.dividends || [];
+      dtaaTbody.innerHTML = dividends.map(d => {
+        const indTax = d.gross_div_inr * (selectedTaxSlab / 100.0);
+        const ftc = Math.min(d.withholding_inr, indTax);
+        return `
+          <tr class="hover:bg-obsidian-hover transition">
+            <td class="py-2 px-3 text-parchment-muted">${d.date}</td>
+            <td class="py-2 px-3 font-bold text-white">${d.symbol}</td>
+            <td class="py-2 px-3 text-right text-white">${fmtUsd(d.gross_div_usd)}</td>
+            <td class="py-2 px-3 text-right text-alert-warn">${fmtUsd(d.withholding_usd)}</td>
+            <td class="py-2 px-3 text-right text-parchment-muted">₹${d.fx_rate}</td>
+            <td class="py-2 px-3 text-right text-white">${fmtInr(d.gross_div_inr)}</td>
+            <td class="py-2 px-3 text-right text-alert-warn">${fmtInr(d.withholding_inr)}</td>
+            <td class="py-2 px-3 text-right text-parchment-muted">${fmtInr(indTax)}</td>
+            <td class="py-2 px-3 text-right text-acid font-bold">+${fmtInr(ftc)}</td>
+            <td class="py-2 px-3 text-center">
+              <span class="px-1.5 py-0.2 text-[10px] border border-acid text-acid">
+                FORM 67 READY
+              </span>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      // 4. Schedule FA
+      const faTbody = document.getElementById('scheduleFaTableBody');
+      const symbols = [...new Set(openLots.map(l => l.symbol))];
+      faTbody.innerHTML = symbols.map(sym => {
+        const lots = openLots.filter(l => l.symbol === sym);
+        const totalCostUsd = lots.reduce((acc, l) => acc + (l.quantity * l.buy_price_usd), 0);
+        const closingUsd = lots.reduce((acc, l) => acc + (l.quantity * l.current_price_usd), 0);
+        const closingInr = closingUsd * (currentAnalysis.portfolio_totals?.current_fx_rate || 88.75);
+        const peakUsd = closingUsd * 1.08;
+        return `
+          <tr class="hover:bg-obsidian-hover transition">
+            <td class="py-2 px-3 font-bold text-white">${sym}</td>
+            <td class="py-2 px-3 text-parchment-muted">01 (USA)</td>
+            <td class="py-2 px-3 text-parchment-dark text-[10px]">Foreign Listed Body Corporate</td>
+            <td class="py-2 px-3 text-right text-parchment-muted">${fmtUsd(totalCostUsd)}</td>
+            <td class="py-2 px-3 text-right text-parchment-muted">${fmtUsd(peakUsd)}</td>
+            <td class="py-2 px-3 text-right text-white">${fmtUsd(closingUsd)}</td>
+            <td class="py-2 px-3 text-right font-bold text-acid">${fmtInr(closingInr)}</td>
+            <td class="py-2 px-3 text-center">
+              <span class="px-1.5 py-0.2 text-[10px] border border-obsidian-border text-parchment-muted">
+                TABLE A3 COMPLIANT
+              </span>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderCharts() {
+      const openLots = currentAnalysis.open_positions || [];
+      const symbols = [...new Set(openLots.map(l => l.symbol))];
+      
+      const assetGains = [];
+      const fxDrifts = [];
+
+      symbols.forEach(sym => {
+        const lots = openLots.filter(l => l.symbol === sym);
+        let totalAssetGainInr = 0;
+        let totalFxDriftInr = 0;
+
+        lots.forEach(l => {
+          const buyFx = l.buy_fx_rate;
+          const currFx = l.current_fx_rate || 88.75;
+          const assetGainUsd = (l.current_price_usd - l.buy_price_usd) * l.quantity;
+          totalAssetGainInr += assetGainUsd * buyFx;
+          totalFxDriftInr += (l.quantity * l.buy_price_usd) * (currFx - buyFx);
+        });
+
+        assetGains.push(Math.round(totalAssetGainInr));
+        fxDrifts.push(Math.round(totalFxDriftInr));
+      });
+
+      // 1. Asset Performance vs FX Drift Chart
+      const ctxFx = document.getElementById('fxDriftChart').getContext('2d');
+      if (fxDriftChartInstance) fxDriftChartInstance.destroy();
+
+      fxDriftChartInstance = new Chart(ctxFx, {
+        type: 'bar',
+        data: {
+          labels: symbols,
+          datasets: [
+            {
+              label: 'Stock Alpha ($ In INR)',
+              data: assetGains,
+              backgroundColor: '#D4FF00',
+              borderColor: '#D4FF00',
+              borderWidth: 0,
+              borderRadius: 0
+            },
+            {
+              label: 'USD/INR Rupee Drift (₹)',
+              data: fxDrifts,
+              backgroundColor: '#4A72FF',
+              borderColor: '#4A72FF',
+              borderWidth: 0,
+              borderRadius: 0
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => ` ${ctx.dataset.label}: ${fmtInr(ctx.raw)}`
+              }
+            }
+          },
+          scales: {
+            x: {
+              stacked: false,
+              grid: { color: '#1F242D' },
+              ticks: { color: '#9DA4B0', font: { family: 'JetBrains Mono', size: 10 } }
+            },
+            y: {
+              grid: { color: '#1F242D' },
+              ticks: {
+                color: '#9DA4B0',
+                font: { family: 'JetBrains Mono', size: 10 },
+                callback: (v) => '₹' + (v / 1000).toFixed(0) + 'k'
+              }
+            }
+          }
+        }
+      });
+
+      // 2. Allocation Doughnut Chart
+      const allocLabels = [];
+      const allocValues = [];
+      symbols.forEach(sym => {
+        const val = openLots.filter(l => l.symbol === sym).reduce((acc, l) => acc + (l.current_val_usd || 0), 0);
+        allocLabels.push(sym);
+        allocValues.push(Math.round(val));
+      });
+
+      const ctxAlloc = document.getElementById('allocationChart').getContext('2d');
+      if (allocationChartInstance) allocationChartInstance.destroy();
+
+      allocationChartInstance = new Chart(ctxAlloc, {
+        type: 'doughnut',
+        data: {
+          labels: allocLabels,
+          datasets: [{
+            data: allocValues,
+            backgroundColor: [
+              '#D4FF00', '#FFFFFF', '#4A72FF', '#FF9F0A',
+              '#A259FF', '#00E5FF', '#FF453A', '#6E7687'
+            ],
+            borderColor: '#08090B',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'right',
+              labels: {
+                color: '#F0EFEA',
+                boxWidth: 8,
+                font: { family: 'JetBrains Mono', size: 10 }
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => ` ${ctx.label}: ${fmtUsd(ctx.raw)}`
+              }
+            }
+          },
+          cutout: '70%'
+        }
+      });
+    }
+
+    function updateTaxSlab(val) {
+      selectedTaxSlab = parseFloat(val);
+      let desc = `${selectedTaxSlab.toFixed(1)}% (STCG)`;
+      if (selectedTaxSlab >= 39) desc = "39.0% (MAX SURCHARGE)";
+      else if (selectedTaxSlab >= 30) desc = "30.0% (STANDARD HNI)";
+      else desc = "20.0% (MID SLAB)";
+      document.getElementById('taxSlabValueDisplay').innerText = desc;
+      renderAll();
+    }
+
+    function setTaxSlabPreset(val) {
+      document.getElementById('taxSlabSlider').value = val;
+      updateTaxSlab(val);
+    }
+
+    function changeFinancialYear(fy) {
+      activeFinancialYear = fy;
+      document.querySelectorAll('.fy-btn').forEach(btn => {
+        btn.classList.remove('border-acid', 'text-acid', 'font-semibold');
+        btn.classList.add('border-obsidian-border', 'text-parchment-muted');
+      });
+      const activeBtn = document.getElementById(`fyBtn-${fy}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('border-obsidian-border', 'text-parchment-muted');
+        activeBtn.classList.add('border-acid', 'text-acid', 'font-semibold');
+      }
+      renderAll();
+      showToast(`FILTER APPLIED: ${fy}`, "info");
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(el => {
+        el.classList.remove('border-acid', 'text-acid', 'font-bold');
+        el.classList.add('border-transparent', 'text-parchment-muted');
+      });
+
+      document.getElementById(tabId).classList.remove('hidden');
+      const activeBtn = document.getElementById(`btn-${tabId}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('border-transparent', 'text-parchment-muted');
+        activeBtn.classList.add('border-acid', 'text-acid', 'font-bold');
+      }
+    }
+
+    function filterActiveTable(query) {
+      const q = query.toUpperCase().trim();
+      const tables = ['openPositionsTableBody', 'realizedTableBody', 'dtaaTableBody', 'scheduleFaTableBody'];
+      tables.forEach(id => {
+        const rows = document.querySelectorAll(`#${id} tr`);
+        rows.forEach(r => {
+          if (!q || r.innerText.toUpperCase().includes(q)) {
+            r.style.display = '';
+          } else {
+            r.style.display = 'none';
+          }
+        });
+      });
+    }
+
+    function setupDragAndDrop() {
+      const dropZone = document.getElementById('dropZone');
+      dropZone.addEventListener('click', () => document.getElementById('csvFileInput').click());
+
+      ['dragenter', 'dragover'].forEach(event => {
+        dropZone.addEventListener(event, (e) => {
+          e.preventDefault();
+          dropZone.classList.add('border-acid', 'bg-obsidian-panel');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(event => {
+        dropZone.addEventListener(event, (e) => {
+          e.preventDefault();
+          dropZone.classList.remove('border-acid', 'bg-obsidian-panel');
+        });
+      });
+
+      dropZone.addEventListener('drop', (e) => {
+        const files = e.dataTransfer.files;
+        if (files.length > 0) uploadFile(files[0]);
+      });
+    }
+
+    function handleFileUpload(event) {
+      const files = event.target.files;
+      if (files.length > 0) uploadFile(files[0]);
+    }
+
+    async function uploadFile(file) {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('tax_slab', selectedTaxSlab);
+      formData.append('fy', activeFinancialYear);
+
+      showToast(`PARSING STATEMENT: ${file.name.toUpperCase()}...`, "info");
+
+      try {
+        const res = await fetch('/api/analyze', {
+          method: 'POST',
+          body: formData
+        });
+        const json = await res.json();
+        if (json.success && json.data) {
+          currentAnalysis = json.data;
+          document.getElementById('activeSourceBadge').innerText = json.source;
+          document.getElementById('tradesCountDisplay').innerText = `${json.data.total_trades_ingested || 0} Orders`;
+          renderAll();
+          showToast(`INGESTION COMPLETE: ${file.name.toUpperCase()}`, "success");
+        } else {
+          throw new Error(json.error || "Failed to analyze CSV");
+        }
+      } catch (err) {
+        showToast(`ERROR: ${err.message}`, "error");
+      }
+    }
+
+    function downloadCaReport(format = 'excel') {
+      const url = `/api/export?format=${format}&fy=${encodeURIComponent(activeFinancialYear)}&tax_slab=${selectedTaxSlab}`;
+      showToast(`GENERATING ${format.toUpperCase()} WORKBOOK...`, "info");
+      window.location.href = url;
+    }
+
+    function copyTradeInstructions() {
+      const candidates = currentAnalysis?.tax_loss_harvest?.candidates || [];
+      const selected = candidates.filter(c => toggledHarvestLots.has(c.lot_id));
+
+      if (!selected.length) {
+        showToast("NO SWAPS SELECTED", "warning");
+        return;
+      }
+
+      const text = selected.map(c => `[ORDER] ${c.action_recommendation} | Tax Saved: ${fmtInr(c.potential_tax_saved_inr)}`).join('\n');
+      navigator.clipboard.writeText(text);
+      showToast(`COPIED ${selected.length} SWAP TICKETS TO CLIPBOARD`, "success");
+    }
+
+    function showToast(message, type = "info") {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      
+      const borders = {
+        info: 'border-parchment-dark text-parchment',
+        success: 'border-acid text-acid',
+        warning: 'border-alert-warn text-alert-warn',
+        error: 'border-alert-loss text-alert-loss'
+      };
+
+      toast.className = `pointer-events-auto px-3.5 py-2 bg-obsidian-panel border ${borders[type] || borders.info} text-xs tracking-tight transition duration-200`;
+      toast.innerHTML = `<span class="font-bold">&gt;&gt;</span> ${message}`;
+      
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3200);
+    }
+  </script>
+</body>
+</html>
