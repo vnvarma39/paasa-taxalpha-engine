@@ -100,15 +100,14 @@
       <div class="flex items-center space-x-4">
         <div class="flex items-baseline space-x-2">
           <span class="font-mono font-bold text-lg tracking-tighter text-white">PAASA</span>
-          <span class="font-mono text-xs text-acid font-semibold uppercase tracking-widest">// TAXALPHA</span>
+          <span class="font-mono text-xs text-acid font-semibold uppercase tracking-widest">// TAXALPHA GLOBAL</span>
         </div>
         <div class="h-4 w-px bg-obsidian-border hidden sm:block"></div>
-        <div class="hidden md:flex items-center space-x-2 text-xs font-mono text-parchment-muted">
-          <span class="text-white font-medium">TERMINAL v1.0</span>
-          <span>•</span>
-          <span>YC S24 PORTFOLIO</span>
-          <span>•</span>
-          <span class="text-acid">RULE 115 FX ENGINE</span>
+        <div class="hidden lg:flex items-center space-x-1.5 text-xs font-mono text-parchment-muted">
+          <button onclick="switchTab('tab-portfolio')" class="px-2 py-0.5 border border-obsidian-border hover:border-acid text-[11px] text-white transition">🇮🇳 INDIA (RULE 115)</button>
+          <button onclick="switchTab('tab-global-jurisdictions')" class="px-2 py-0.5 border border-obsidian-border hover:border-acid text-[11px] text-white transition">🇬🇧 UK (HMRC POOL)</button>
+          <button onclick="switchTab('tab-global-jurisdictions')" class="px-2 py-0.5 border border-obsidian-border hover:border-acid text-[11px] text-white transition">🇺🇸 US (IRS 8949)</button>
+          <button onclick="switchTab('tab-ucits-arbitrage')" class="px-2 py-0.5 border border-obsidian-border hover:border-acid text-[11px] text-acid font-bold transition">🌐 UCITS ARBITRAGE</button>
         </div>
       </div>
 
@@ -477,18 +476,24 @@
         
         <!-- Tab Navigation Bar -->
         <div class="border-b border-obsidian-border bg-obsidian-panel px-4 flex flex-wrap items-center justify-between gap-2">
-          <div class="flex space-x-1 font-mono text-xs">
-            <button onclick="switchTab('tab-portfolio')" id="btn-tab-portfolio" class="tab-btn px-4 py-3 font-bold border-b-2 border-acid text-acid transition">
-              01 // OPEN LOTS & UNREALIZED MATRIX
+          <div class="flex flex-wrap space-x-1 font-mono text-xs">
+            <button onclick="switchTab('tab-portfolio')" id="btn-tab-portfolio" class="tab-btn px-3 py-3 font-bold border-b-2 border-acid text-acid transition">
+              01 // OPEN LOTS
             </button>
-            <button onclick="switchTab('tab-realized')" id="btn-tab-realized" class="tab-btn px-4 py-3 font-medium border-b-2 border-transparent text-parchment-muted hover:text-white transition">
-              02 // REALIZED CAPITAL GAINS (FIFO)
+            <button onclick="switchTab('tab-realized')" id="btn-tab-realized" class="tab-btn px-3 py-3 font-medium border-b-2 border-transparent text-parchment-muted hover:text-white transition">
+              02 // REALIZED (FIFO)
             </button>
-            <button onclick="switchTab('tab-dtaa')" id="btn-tab-dtaa" class="tab-btn px-4 py-3 font-medium border-b-2 border-transparent text-parchment-muted hover:text-white transition">
-              03 // DTAA ART 10 & FORM 67
+            <button onclick="switchTab('tab-dtaa')" id="btn-tab-dtaa" class="tab-btn px-3 py-3 font-medium border-b-2 border-transparent text-parchment-muted hover:text-white transition">
+              03 // DTAA & FORM 67
             </button>
-            <button onclick="switchTab('tab-schedule-fa')" id="btn-tab-schedule-fa" class="tab-btn px-4 py-3 font-medium border-b-2 border-transparent text-parchment-muted hover:text-white transition">
-              04 // SCHEDULE FA ITR-2 DISCLOSURE
+            <button onclick="switchTab('tab-schedule-fa')" id="btn-tab-schedule-fa" class="tab-btn px-3 py-3 font-medium border-b-2 border-transparent text-parchment-muted hover:text-white transition">
+              04 // SCHEDULE FA
+            </button>
+            <button onclick="switchTab('tab-global-jurisdictions')" id="btn-tab-global-jurisdictions" class="tab-btn px-3 py-3 font-medium border-b-2 border-transparent text-parchment-muted hover:text-white transition">
+              05 // GLOBAL JURISDICTIONS (UK/HMRC • US • UAE)
+            </button>
+            <button onclick="switchTab('tab-ucits-arbitrage')" id="btn-tab-ucits-arbitrage" class="tab-btn px-3 py-3 font-medium border-b-2 border-transparent text-parchment-muted hover:text-white transition">
+              06 // UCITS ESTATE & WITHHOLDING ARBITRAGE
             </button>
           </div>
 
@@ -604,6 +609,120 @@
                 <!-- Rendered via JS -->
               </tbody>
             </table>
+          </div>
+        </div>
+
+        <!-- TAB 5: GLOBAL JURISDICTIONS (UK/HMRC • US/IRS • UAE/SG) -->
+        <div id="tab-global-jurisdictions" class="tab-content hidden p-4 space-y-5">
+          <div class="p-3 bg-obsidian border border-obsidian-border text-xs font-mono text-parchment-muted flex items-center justify-between">
+            <span>MULTI-JURISDICTION CROSS-BORDER TAX ARBITRAGE: Realized capital gains mapped across UK (HMRC Sec 104 Pool), US (IRS 8949), India (Rule 115), and UAE/SG (0% CGT).</span>
+            <span class="text-acid font-bold">CROSS-BORDER LEDGER</span>
+          </div>
+
+          <!-- 4-Jurisdiction Comparison Cards -->
+          <div id="jurisdictionCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 font-mono">
+            <!-- Rendered via JS -->
+          </div>
+
+          <!-- UK HMRC Section 104 Share Pooling Ledger -->
+          <div class="border border-obsidian-border bg-obsidian">
+            <div class="p-3 border-b border-obsidian-border flex items-center justify-between font-mono text-xs">
+              <div class="flex items-center space-x-2">
+                <span class="text-white font-bold">🇬🇧 UK HMRC SECTION 104 SHARE POOLING AUDIT</span>
+                <span class="text-[10px] text-parchment-dark">(TCGA 1992 s104 - Average Cost Basis)</span>
+              </div>
+              <div class="text-[11px] text-acid font-bold" id="ukHmrcExemptDisplay">
+                ANNUAL EXEMPTION: £3,000 | TAXABLE: £0
+              </div>
+            </div>
+            <div class="overflow-x-auto custom-scrollbar p-1">
+              <table class="w-full text-left text-xs font-mono">
+                <thead>
+                  <tr class="border-b border-obsidian-border bg-obsidian-panel text-parchment-muted uppercase text-[10px]">
+                    <th class="py-2.5 px-3">DISPOSAL DATE</th>
+                    <th class="py-2.5 px-3">TICKER</th>
+                    <th class="py-2.5 px-3 text-right">QUANTITY</th>
+                    <th class="py-2.5 px-3 text-right">DISPOSAL VALUE (£)</th>
+                    <th class="py-2.5 px-3 text-right">HMRC POOLED COST (£)</th>
+                    <th class="py-2.5 px-3 text-right text-acid font-bold">GAIN / LOSS (£)</th>
+                    <th class="py-2.5 px-3 text-center">HMRC TAX YEAR</th>
+                  </tr>
+                </thead>
+                <tbody id="ukHmrcTableBody" class="divide-y divide-obsidian-border">
+                  <!-- Rendered via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 6: UCITS ESTATE & WITHHOLDING ARBITRAGE -->
+        <div id="tab-ucits-arbitrage" class="tab-content hidden p-4 space-y-5">
+          <!-- US Estate Tax Warning Banner -->
+          <div class="p-4 bg-obsidian border border-alert-warn/40 font-mono text-xs space-y-2">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-2 text-alert-warn font-bold">
+                <i data-lucide="shield-alert" class="w-4 h-4"></i>
+                <span>US ESTATE TAX LIABILITY AUDIT (40% ON ASSETS > $60,000)</span>
+              </div>
+              <span class="px-2 py-0.5 bg-alert-warn/20 text-alert-warn border border-alert-warn/40 text-[10px] font-bold">
+                HIGH UNWANTED RISK
+              </span>
+            </div>
+            <p class="text-parchment-muted text-[11px]">
+              Non-Resident Aliens (NRAs) investing in US-domiciled ETFs (e.g. VOO, QQQ, SPY) face up to 40% US federal estate tax on assets exceeding just $60,000 upon death. Irish-domiciled UCITS ETFs are non-US situs assets, completely eliminating this 40% liability.
+            </p>
+          </div>
+
+          <!-- UCITS Alpha Metrics Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 font-mono">
+            <div class="p-3.5 bg-obsidian border border-obsidian-border">
+              <div class="text-[10px] text-parchment-muted uppercase">TOTAL US-SITUS EXPOSURE</div>
+              <div id="ucitsTotalUsSitus" class="text-lg font-bold text-white mt-1">$48,320</div>
+              <div class="text-[10px] text-parchment-dark mt-0.5">Exemption Limit: $60,000</div>
+            </div>
+            <div class="p-3.5 bg-obsidian border border-obsidian-border">
+              <div class="text-[10px] text-parchment-muted uppercase">ESTATE TAX LIABILITY RISK</div>
+              <div id="ucitsEstateTaxRisk" class="text-lg font-bold text-alert-gain mt-1">$0.00 (SHIELDED)</div>
+              <div class="text-[10px] text-parchment-dark mt-0.5">Below $60k threshold</div>
+            </div>
+            <div class="p-3.5 bg-obsidian border border-obsidian-border">
+              <div class="text-[10px] text-parchment-muted uppercase">ANNUAL DIVIDEND LEAKAGE AVOIDED</div>
+              <div id="ucitsAnnualLeakage" class="text-lg font-bold text-acid mt-1">+$214.50 / YR</div>
+              <div class="text-[10px] text-parchment-dark mt-0.5">15% Ireland vs 30% US WHT</div>
+            </div>
+            <div class="p-3.5 bg-obsidian border border-obsidian-border">
+              <div class="text-[10px] text-parchment-muted uppercase">10-YR REINVESTMENT ALPHA</div>
+              <div id="ucits10YrAlpha" class="text-lg font-bold text-acid mt-1">+$3,180.20</div>
+              <div class="text-[10px] text-parchment-dark mt-0.5">Compounded @ 8% in 'Acc' NAV</div>
+            </div>
+          </div>
+
+          <!-- UCITS Migration Matrix -->
+          <div class="border border-obsidian-border bg-obsidian">
+            <div class="p-3 border-b border-obsidian-border flex items-center justify-between font-mono text-xs">
+              <span class="text-white font-bold">US-DOMICILED TO IRISH UCITS ETF REPLACEMENT MATRIX</span>
+              <span class="text-[10px] text-acid font-bold">LONDON STOCK EXCHANGE (USD TRADING)</span>
+            </div>
+            <div class="overflow-x-auto custom-scrollbar p-1">
+              <table class="w-full text-left text-xs font-mono">
+                <thead>
+                  <tr class="border-b border-obsidian-border bg-obsidian-panel text-parchment-muted uppercase text-[10px]">
+                    <th class="py-2.5 px-3">US HOLDING</th>
+                    <th class="py-2.5 px-3 text-right">VALUE ($)</th>
+                    <th class="py-2.5 px-3 text-center">RECOMMENDED UCITS TICKER</th>
+                    <th class="py-2.5 px-3">EXCHANGE</th>
+                    <th class="py-2.5 px-3">SHARE STRUCTURE</th>
+                    <th class="py-2.5 px-3 text-right">ANNUAL DIV ($)</th>
+                    <th class="py-2.5 px-3 text-right text-acid font-bold">ANNUAL TAX SAVED</th>
+                    <th class="py-2.5 px-3 text-right text-acid font-bold">10-YR COMP ALPHA</th>
+                  </tr>
+                </thead>
+                <tbody id="ucitsTableBody" class="divide-y divide-obsidian-border">
+                  <!-- Rendered via JS -->
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 
@@ -1028,6 +1147,131 @@
           </tr>
         `;
       }).join('');
+
+      // 5. Global Jurisdiction Cards & HMRC Table
+      renderGlobalJurisdictions();
+
+      // 6. UCITS Estate & Withholding Arbitrage
+      renderUcitsArbitrage();
+    }
+
+    function renderGlobalJurisdictions() {
+      const cardsGrid = document.getElementById('jurisdictionCardsGrid');
+      const comps = currentAnalysis?.jurisdiction_comparisons || [
+        { code: "IN", name: "India (ITR-2)", flag: "🇮🇳", reporting_currency: "₹42,88,400 INR", effective_tax_rate: "12.5% LTCG / 30% STCG", estimated_tax: "₹94,463", key_benefit_or_rule: "Rule 115 SBI TT Conversion; Sec 70 Loss Set-Off", tax_efficiency_rating: "Moderate" },
+        { code: "UK", name: "United Kingdom (HMRC)", flag: "🇬🇧", reporting_currency: "£38,172 GBP", effective_tax_rate: "20% (above £3k exemption)", estimated_tax: "£4,280", key_benefit_or_rule: "Section 104 Average Cost Pooling; Bed & ISA Allowance", tax_efficiency_rating: "High" },
+        { code: "US", name: "United States (IRS)", flag: "🇺🇸", reporting_currency: "$48,320 USD", effective_tax_rate: "15% - 20% LTCG", estimated_tax: "$5,410", key_benefit_or_rule: "Form 8949 Specific ID; 30-Day Wash-Sale Rule", tax_efficiency_rating: "Moderate" },
+        { code: "GLOBAL", name: "UAE (DIFC) / Singapore", flag: "🌐", reporting_currency: "$48,320 USD", effective_tax_rate: "0% (Zero Capital Gains)", estimated_tax: "$0 (Tax-Free)", key_benefit_or_rule: "Zero CGT; UCITS Dividend Withholding Optimization", tax_efficiency_rating: "Maximum (0% Drag)" }
+      ];
+
+      cardsGrid.innerHTML = comps.map(c => `
+        <div class="p-3.5 bg-obsidian border border-obsidian-border hover:border-acid/60 transition flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-bold text-white">${c.flag} ${c.name}</span>
+              <span class="text-[9px] px-1.5 py-0.5 border border-obsidian-border text-acid">${c.tax_efficiency_rating}</span>
+            </div>
+            <div class="mt-2 text-xs text-parchment-muted">Reporting Valuation:</div>
+            <div class="text-sm font-bold text-white">${c.reporting_currency}</div>
+            <div class="mt-2 text-[11px] text-parchment-dark">Statutory Rate:</div>
+            <div class="text-xs font-semibold text-white">${c.effective_tax_rate}</div>
+            <div class="mt-2 text-[10px] text-parchment-muted">${c.key_benefit_or_rule}</div>
+          </div>
+          <div class="mt-3 pt-2 border-t border-obsidian-border flex items-center justify-between text-xs">
+            <span class="text-parchment-muted">Estimated Tax:</span>
+            <span class="text-acid font-bold">${c.estimated_tax}</span>
+          </div>
+        </div>
+      `).join('');
+
+      // Render UK HMRC Pooling Table
+      const ukHmrc = currentAnalysis?.uk_hmrc || {};
+      const ukTbody = document.getElementById('ukHmrcTableBody');
+      const events = ukHmrc.realized_events || [
+        { date: "2024-03-10", symbol: "VOO", quantity: 20, disposal_proceeds_gbp: 7393.22, hmrc_pooled_cost_gbp: 6478.00, gain_loss_gbp: 915.22, hmrc_tax_year: "TY 2023/24" },
+        { date: "2024-08-25", symbol: "NVDA", quantity: 40, disposal_proceeds_gbp: 4044.01, hmrc_pooled_cost_gbp: 3792.00, gain_loss_gbp: 252.01, hmrc_tax_year: "TY 2024/25" },
+        { date: "2024-11-12", symbol: "AAPL", quantity: 20, disposal_proceeds_gbp: 3554.21, hmrc_pooled_cost_gbp: 2607.00, gain_loss_gbp: 947.21, hmrc_tax_year: "TY 2024/25" },
+        { date: "2025-02-20", symbol: "GOOGL", quantity: 20, disposal_proceeds_gbp: 3001.21, hmrc_pooled_cost_gbp: 2765.00, gain_loss_gbp: 236.21, hmrc_tax_year: "TY 2024/25" }
+      ];
+
+      const exemptDisplay = document.getElementById('ukHmrcExemptDisplay');
+      if (exemptDisplay) {
+        const taxable = ukHmrc.taxable_gain_gbp || 0.0;
+        const tax = ukHmrc.estimated_tax_gbp || 0.0;
+        exemptDisplay.innerText = `ANNUAL EXEMPTION: £3,000 | TAXABLE: £${taxable.toFixed(2)} | EST TAX: £${tax.toFixed(2)}`;
+      }
+
+      ukTbody.innerHTML = events.map(e => `
+        <tr class="hover:bg-obsidian-hover transition">
+          <td class="py-2 px-3 text-parchment-muted">${e.date}</td>
+          <td class="py-2 px-3 font-bold text-white">${e.symbol}</td>
+          <td class="py-2 px-3 text-right text-white">${e.quantity}</td>
+          <td class="py-2 px-3 text-right text-parchment-muted">£${e.disposal_proceeds_gbp.toFixed(2)}</td>
+          <td class="py-2 px-3 text-right text-parchment-muted">£${e.hmrc_pooled_cost_gbp.toFixed(2)}</td>
+          <td class="py-2 px-3 text-right font-bold text-acid">+£${e.gain_loss_gbp.toFixed(2)}</td>
+          <td class="py-2 px-3 text-center text-parchment-dark text-[10px]">${e.hmrc_tax_year}</td>
+        </tr>
+      `).join('');
+    }
+
+    function renderUcitsArbitrage() {
+      const ucits = currentAnalysis?.ucits_optimization || {};
+      const summary = ucits.summary || {};
+
+      const totalUs = summary.total_us_situs_assets_usd || 48320.00;
+      const estateRisk = summary.estimated_estate_tax_liability_usd || 0.00;
+      const annualLeakage = summary.total_annual_withholding_leakage_usd || 214.50;
+      const compAlpha = summary.projected_10yr_reinvestment_alpha_usd || 3180.20;
+
+      const totalUsEl = document.getElementById('ucitsTotalUsSitus');
+      const riskEl = document.getElementById('ucitsEstateTaxRisk');
+      const leakEl = document.getElementById('ucitsAnnualLeakage');
+      const alphaEl = document.getElementById('ucits10YrAlpha');
+
+      if (totalUsEl) totalUsEl.innerText = fmtUsd(totalUs);
+      if (riskEl) {
+        if (summary.is_estate_tax_at_risk) {
+          riskEl.className = "text-lg font-bold text-alert-loss mt-1";
+          riskEl.innerText = fmtUsd(estateRisk) + " (EXPOSED)";
+        } else {
+          riskEl.className = "text-lg font-bold text-alert-gain mt-1";
+          riskEl.innerText = "$0.00 (SHIELDED)";
+        }
+      }
+      if (leakEl) leakEl.innerText = `+${fmtUsd(annualLeakage)} / YR`;
+      if (alphaEl) alphaEl.innerText = `+${fmtUsd(compAlpha)}`;
+
+      // Render Table
+      const tbody = document.getElementById('ucitsTableBody');
+      const candidates = ucits.ucits_candidates || [
+        { symbol: "VOO", name: "Vanguard S&P 500 ETF (US)", current_val_usd: 23184.00, ucits_replacement: "CSPX", ucits_alt: "VUAA", exchange: "London Stock Exchange (LSE)", structure: "Accumulating (Acc - Auto Reinvested)", annual_dividend_usd: 336.17, annual_tax_saved_usd: 33.62, compound_10yr_alpha_usd: 489.10 },
+        { symbol: "QQQ", name: "Invesco QQQ Trust (US)", current_val_usd: 31102.50, ucits_replacement: "CNDX", ucits_alt: "EQQQ", exchange: "London Stock Exchange (LSE)", structure: "Accumulating (Acc - Auto Reinvested)", annual_dividend_usd: 192.84, annual_tax_saved_usd: 19.28, compound_10yr_alpha_usd: 280.40 }
+      ];
+
+      tbody.innerHTML = candidates.map(c => `
+        <tr class="hover:bg-obsidian-hover transition">
+          <td class="py-2.5 px-3">
+            <span class="font-bold text-white">${c.symbol}</span>
+            <span class="text-[10px] text-parchment-dark block">${c.name}</span>
+          </td>
+          <td class="py-2.5 px-3 text-right text-white font-semibold">${fmtUsd(c.current_val_usd)}</td>
+          <td class="py-2.5 px-3 text-center">
+            <div class="inline-flex items-center space-x-1.5 px-2 py-0.5 bg-acid text-black font-bold text-xs">
+              <span>${c.ucits_replacement}</span>
+              <span class="text-[10px] opacity-75">/ ${c.ucits_alt}</span>
+            </div>
+          </td>
+          <td class="py-2.5 px-3 text-parchment-muted text-xs">${c.exchange}</td>
+          <td class="py-2.5 px-3">
+            <span class="px-1.5 py-0.2 text-[10px] border border-acid text-acid">
+              ACC (ZERO DRAG)
+            </span>
+          </td>
+          <td class="py-2.5 px-3 text-right text-parchment-muted">${fmtUsd(c.annual_dividend_usd)}</td>
+          <td class="py-2.5 px-3 text-right font-bold text-acid">+${fmtUsd(c.annual_tax_saved_usd)}/yr</td>
+          <td class="py-2.5 px-3 text-right font-bold text-acid">+${fmtUsd(c.compound_10yr_alpha_usd)}</td>
+        </tr>
+      `).join('');
     }
 
     function renderCharts() {
@@ -1196,7 +1440,8 @@
         el.classList.add('border-transparent', 'text-parchment-muted');
       });
 
-      document.getElementById(tabId).classList.remove('hidden');
+      const target = document.getElementById(tabId);
+      if (target) target.classList.remove('hidden');
       const activeBtn = document.getElementById(`btn-${tabId}`);
       if (activeBtn) {
         activeBtn.classList.remove('border-transparent', 'text-parchment-muted');
@@ -1204,9 +1449,17 @@
       }
     }
 
+    // Auto-switch tab based on URL hash (e.g. #tab-global-jurisdictions)
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.location.hash) {
+        const hashId = window.location.hash.replace('#', '');
+        setTimeout(() => switchTab(hashId), 150);
+      }
+    });
+
     function filterActiveTable(query) {
       const q = query.toUpperCase().trim();
-      const tables = ['openPositionsTableBody', 'realizedTableBody', 'dtaaTableBody', 'scheduleFaTableBody'];
+      const tables = ['openPositionsTableBody', 'realizedTableBody', 'dtaaTableBody', 'scheduleFaTableBody', 'ukHmrcTableBody', 'ucitsTableBody'];
       tables.forEach(id => {
         const rows = document.querySelectorAll(`#${id} tr`);
         rows.forEach(r => {

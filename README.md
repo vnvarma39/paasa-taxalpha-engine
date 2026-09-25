@@ -149,97 +149,108 @@ Console Output:
 
 ---
 
-## 5. API Reference
+## 5. Visual Terminal Walkthrough
+
+<div align="center">
+  <img src="assets/terminal_overview.png" alt="Paasa Terminal Dashboard Overview" width="100%" style="border-radius: 8px; border: 1px solid #1F242D;" />
+  <p><em>Figure 1: Bespoke Brutalist Financial Terminal displaying ₹79,927 in pre-March 31 tax alpha and live wash-sale replacement matrix.</em></p>
+</div>
+
+<br/>
+
+<div align="center">
+  <img src="assets/global_jurisdictions.png" alt="Multi-Jurisdiction Cross-Border Tax Terminal" width="100%" style="border-radius: 8px; border: 1px solid #1F242D;" />
+  <p><em>Figure 2: Real-time Return Decomposition (Stock Alpha vs USD/INR Currency Drift) and Live Harvest Execution Desk.</em></p>
+</div>
+
+<br/>
+
+<div align="center">
+  <img src="assets/terminal_full_page.png" alt="Full Terminal Ledger and Compliance Matrix" width="100%" style="border-radius: 8px; border: 1px solid #1F242D;" />
+  <p><em>Figure 3: Full interactive audit ledger displaying Rule 115 FIFO lots, HMRC Section 104 pooling, and Schedule FA compliance matrices.</em></p>
+</div>
+
+<br/>
+
+---
+
+## 6. Global Multi-Jurisdiction Cross-Border Engine
+
+Cross-border wealth management extends beyond single-country borders. The engine models tax compliance and arbitrage across 4 major global regimes:
+
+```
+┌───────────────────────────────────────────────────────────────────────────────────┐
+│                    GLOBAL CROSS-BORDER TAX ARBITRAGE MATRIX                       │
+├────────────────────┬────────────────────┬────────────────────┬────────────────────┤
+│ 🇮🇳 INDIA (ITR-2)   │ 🇬🇧 UK (HMRC)       │ 🇺🇸 US (IRS)        │ 🌐 UAE / SINGAPORE │
+├────────────────────┼────────────────────┼────────────────────┼────────────────────┤
+│ • Fiscal: Apr 1-31 │ • Fiscal: Apr 6-5  │ • Fiscal: Jan 1-31 │ • Fiscal: Jan 1-31 │
+│ • Rule 115 SBI TT  │ • Sec 104 Pooling  │ • Form 8949 Specific│ • 0% Capital Gains│
+│ • LTCG @ 12.5%     │ • £3,000 Exemption │ • 30-Day Wash-Sale │ • Estate Tax Shield│
+│ • STCG @ Slab      │ • Bed & Breakfast  │ • Short/Long (12m) │ • UCITS Reinvest   │
+└────────────────────┴────────────────────┴────────────────────┴────────────────────┘
+```
+
+### A. 🇬🇧 United Kingdom: HMRC Section 104 Share Pooling (TCGA 1992)
+Unlike Indian and US FIFO/Specific-ID rules, UK tax law mandates **Section 104 Share Pooling**:
+- All shares of the same class acquired by the investor are treated as forming a single asset (a "pool") with an **average pooled acquisition cost**.
+- When shares are sold, the cost basis is proportional to the average cost of the pool, preventing artificial cherry-picking of high-cost lots.
+- **30-Day "Bed & Breakfasting" Rule:** Disposals followed by repurchases of identical shares within 30 days are matched against the repurchase first, neutralizing artificial loss creation.
+- Computes UK capital gains across the **April 6 – April 5** tax year with the £3,000 Annual Exempt Amount.
+
+### B. 🌐 UCITS Irish-Domiciled ETF Arbitrage & Estate Tax Shielding
+For global non-US resident aliens (NRAs) in India, the UK, Europe, UAE, and Singapore, investing in US-domiciled ETFs (`VOO`, `QQQ`, `VT`, `SPY`) exposes them to severe financial drag:
+
+1. **The 40% US Estate Tax Risk on US-Situs Assets:**
+   - Non-US residents holding US-domiciled assets face up to **40% US federal estate tax on assets over just $60,000** upon death.
+   - **The UCITS Solution:** Irish-domiciled UCITS ETFs are non-US situs assets. Migrating from `VOO` to `CSPX` / `VUAA` (London Stock Exchange in USD) **completely eliminates US estate tax liability**.
+2. **15% vs 30% Dividend Withholding Tax Arbitrage:**
+   - Standard US withholding for non-treaty global investors is 30% (and 25% under India-US DTAA).
+   - Under the bilateral US-Ireland tax treaty, Irish-domiciled UCITS ETFs pay only **15% withholding at the fund level**, generating immediate dividend tax alpha.
+3. **Accumulating (Acc) Share Class Zero-Drag Compounding:**
+   - UCITS ETFs offer accumulating share classes that automatically reinvest dividends internally into the fund NAV, eliminating annual distribution taxable events and foreign currency exchange friction.
+
+| US-Domiciled Holding | Equivalent Irish UCITS | Exchange & Currency | Share Class | Dividend WHT Rate | US Estate Tax |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **VOO** (Vanguard S&P 500) | **CSPX** / **VUAA** | LSE (USD) | Accumulating (Acc) | **15%** (vs 25–30%) | **0% (Shielded)** |
+| **QQQ** (Invesco Nasdaq) | **CNDX** / **EQQQ** | LSE (USD) | Accumulating (Acc) | **15%** (vs 25–30%) | **0% (Shielded)** |
+| **VT** (Vanguard Total World) | **VWRA** / **SSAC** | LSE (USD) | Accumulating (Acc) | **15%** (vs 25–30%) | **0% (Shielded)** |
+| **SPY** (SPDR S&P 500) | **CSPX** / **SPY5** | LSE (USD) | Accumulating (Acc) | **15%** (vs 25–30%) | **0% (Shielded)** |
+
+---
+
+## 7. API Reference
 
 | Endpoint | Method | Parameters | Description |
 | :--- | :--- | :--- | :--- |
 | `/` | `GET` | — | Serves the single-page terminal dashboard. |
 | `/api/health` | `GET` | — | Health check and engine status telemetry. |
-| `/api/sample` | `GET` | `tax_slab` (float), `fy` (str) | Computes full analysis on bundled sample portfolio (`sample_portfolio_ibkr.csv`). |
-| `/api/analyze` | `POST` | `file` (multipart) OR `csv_text` (JSON) | Ingests custom trade CSV and returns parsed JSON analysis. |
+| `/api/sample` | `GET` | `tax_slab` (float), `fy` (str) | Computes full analysis on bundled sample portfolio (`sample_portfolio_ibkr.csv`), including UK HMRC and UCITS metrics. |
+| `/api/analyze` | `POST` | `file` (multipart) OR `csv_text` (JSON) | Ingests custom trade CSV and returns parsed multi-jurisdiction JSON analysis. |
 | `/api/export` | `GET` | `format` (`excel`\|`csv`), `fy` (str), `tax_slab` (float) | Streams downloadable, CA-ready multi-tab Excel spreadsheet or CSV. |
 
 ---
 
-## 6. Video Demo Script (2-Minute Loom Walkthrough)
-### *Pitching to Nitish Sahni (CEO) & Sparsh Sharma (Co-founder), Paasa*
-
-* **Target Duration:** 2 minutes (120 seconds)  
-* **Format:** Loom screen share + camera bubble in the bottom corner  
-* **Target Audience:** Nitish Sahni (`nitish@paasa.com`) & Sparsh Sharma (`sparsh@paasa.com`)
-
----
-
-### [0:00 – 0:25] The Hook: The Hidden Pain of Indian LRS Tax Season
-> *(Screen on: Blank Interactive Brokers 1099-B PDF side-by-side with an Indian ITR-2 Schedule FA form)*
-> 
-> "Hey Nitish and Sparsh! Huge congratulations on the YC S24 batch. I love Paasa’s mission of making global asset allocation effortless for Indian investors.
-> 
-> But right now, every Indian HNI investing in US stocks through Interactive Brokers or DriveWealth runs into a massive wall every March:
-> 1. US brokers report on **Jan 1 to Dec 31 calendar years**, while Indian taxes require **April 1 to March 31 fiscal years**.
-> 2. Rule 115 mandates converting gains using the **SBI TT Buying Rate on the last day of the preceding month**.
-> 3. Worst of all: US brokers **never tell Indian investors to harvest losses before March 31st**, costing them ₹50,000 to ₹1,00,000 in unharvested tax alpha."
-
----
-
-### [0:25 – 1:00] The Solution: Ingestion & Dual-Calendar Normalization
-> *(Action: Switch tab to `http://127.0.0.1:5000`. Drag and drop `sample_portfolio_ibkr.csv` into the terminal ingestion zone).*
-> 
-> "I built the **Paasa TaxAlpha Engine** to turn this 14-hour CA headache into a 2-second automated workflow.
-> 
-> Watch this: I drop a raw Interactive Brokers trade confirmation CSV right into the terminal. In less than 200 milliseconds, the engine:
-> - Normalizes every lot under **Indian Rule 115** using our bundled historical SBI TT rate engine.
-> - Automatically applies **Budget 2024 foreign equity rules**: classifying holding periods over 24 months as LTCG at 12.5%, and short-term at the investor's slab.
-> - Decomposes the portfolio returns into **Stock Alpha vs USD/INR Currency Drift**, showing the exact tailwind from rupee depreciation."
-
----
-
-### [1:00 – 1:35] The "Magic Moment": Algorithmic Pre-March 31 Tax Alpha
-> *(Action: Scroll down to the Pre-March 31 Algorithmic Tax-Loss Harvester. Point cursor at the live counter: ₹79,927. Toggle checkboxes on and off to show the live counter reacting).*
-> 
-> "Here is the magic moment for Paasa:
-> Look at our **Pre-March 31 Algorithmic Tax-Loss Harvester**. The engine scanned the open positions and found ₹5.2 Lakhs in unrealized losses across high-entry lots in AMD and TSLA.
-> 
-> It provides exact, wash-sale-safe swap instructions:
-> - *Sell AMD $\rightarrow$ Swap into SMH (VanEck Semiconductor ETF, correlation 0.84)*
-> - *Sell VOO $\rightarrow$ Swap into IVV (iShares S&P 500, correlation 0.999)*
-> 
-> Look at the live counter: toggling these execution tickets immediately projects **₹79,927 saved in cash taxes** before March 31st. The investor maintains 100% market exposure while resetting their cost basis and capturing pure tax alpha."
-
----
-
-### [1:35 – 1:50] The 1-Click CA Export
-> *(Action: Click the "EXPORT CA WORKBOOK (.XLSX)" button in the top right. Open the downloaded Excel file to show the 5 formatted tabs: Summary, Schedule Capital Gains, Schedule FSI Dividends, Schedule FA).*
-> 
-> "And for their Chartered Accountant? One click generates a complete, audit-ready Excel workbook with Schedule Capital Gains FIFO matching, Schedule FSI dividend foreign tax credit under Section 90, and ITR-2 Schedule FA foreign asset disclosure."
-
----
-
-### [1:50 – 2:05] The Close & Pitch
-> *(Camera focus)*
-> 
-> "I built this prototype specifically for Paasa because I want to bring this level of engineering velocity and financial depth to your team as a software engineering intern.
-> 
-> I’ve documented the architecture and repo cleanly. I’d love 10 minutes this week to show you how we can integrate this directly into Paasa’s user dashboard.
-> 
-> Thanks Nitish and Sparsh, and talk soon!"
-
----
-
-## 7. Project File Structure
+## 8. Project File Structure
 
 ```text
 paasa/
 ├── server.py                          # Flask REST API server (port 5000)
-├── README.md                          # Comprehensive documentation & pitch blueprint
+├── README.md                          # Comprehensive architecture & engineering documentation
 ├── PRD_Dual_Calendar_Tax_Engine.md    # Product Requirement Document
-├── problem_breakdown_and_pitch.md     # Market breakdown & cold outreach templates
+├── requirements.txt                   # Production dependencies (Flask, pandas, openpyxl)
+├── assets/                            # High-resolution terminal screenshots
+│   ├── terminal_overview.png          # Main terminal overview & telemetry
+│   ├── global_jurisdictions.png       # Multi-jurisdiction & return decomposition
+│   └── terminal_full_page.png         # Full audit ledger & statutory matrix
 │
 ├── core/                              # Financial calculation engine package
 │   ├── __init__.py                    # Exports core modules and helper functions
 │   ├── parser.py                      # Robust CSV ingestion (IBKR, DW, Generic)
 │   ├── currency.py                    # Rule 115 SBI TT Buying Rate converter
 │   ├── tax_engine.py                  # FIFO lot matching, Budget 2024 LTCG/STCG
+│   ├── global_tax.py                  # UK HMRC Section 104 pooling & US IRS modeling
+│   ├── ucits_optimizer.py             # Irish UCITS migration & estate tax shielding
 │   ├── loss_harvester.py              # Loss scanner & wash-sale ETF swap matrix
 │   ├── dtaa_reconciler.py             # Form 67 & Schedule FSI foreign tax credits
 │   └── exporter.py                    # Multi-tab publication-grade Excel exporter
@@ -255,6 +266,7 @@ paasa/
 
 ---
 
-## 8. License & Attribution
-Developed with pride by **Nikhil Varma Vanapala** for **Paasa (YC S24)**.
-All financial calculations conform to the Indian Income Tax Act, 1961, Rule 115 of the Income Tax Rules, 1962, and the Union Budget 2024 capital gains regime.
+## 9. License & Attribution
+Developed by **Nikhil Varma Vanapala** for **Paasa (YC S24)**.
+All financial calculations conform to the Indian Income Tax Act, 1961 (Rule 115, Sec 70), the UK Taxation of Chargeable Gains Act 1992 (s104 Pooling), and the US Internal Revenue Code.
+

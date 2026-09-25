@@ -13,6 +13,8 @@ from core.tax_engine import TaxEngine
 from core.loss_harvester import TaxLossHarvester
 from core.dtaa_reconciler import DTAAReconciler
 from core.exporter import ReportExporter
+from core.ucits_optimizer import UCITSOptimizer
+from core.global_tax import GlobalTaxEngine
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
@@ -51,8 +53,22 @@ def run_pipeline(csv_source, tax_slab_pct=30.0, selected_fy=None):
         tax_slab_pct=tax_slab_pct
     )
 
+    # 1. UCITS ETF & Estate Tax Shielding Analysis
+    ucits_data = UCITSOptimizer.analyze_portfolio(analysis["open_positions"])
+
+    # 2. Multi-Jurisdiction Global Comparison
+    total_gain_usd = sum(f.get("gain_usd", 0.0) for f in analysis["fy_summary"].values())
+    portfolio_val_usd = analysis["portfolio_totals"].get("current_val_usd", 0.0)
+    raw_trades = [{"date": t.date.isoformat(), "symbol": t.symbol, "action": t.action, "quantity": t.quantity, "price_usd": t.price_usd} for t in trades]
+    uk_data = GlobalTaxEngine.calculate_uk_hmrc_pooling(raw_trades)
+    jurisdiction_comps = GlobalTaxEngine.get_jurisdiction_comparison(portfolio_val_usd, total_gain_usd)
+
     analysis["tax_loss_harvest"] = harvest
     analysis["dtaa"] = dtaa
+    analysis["ucits_optimization"] = ucits_data
+    analysis["uk_hmrc"] = uk_data
+    analysis["jurisdiction_comparisons"] = jurisdiction_comps
+    analysis["global_jurisdictions"] = GlobalTaxEngine.JURISDICTIONS
     analysis["tax_slab_pct"] = tax_slab_pct
     analysis["selected_fy"] = selected_fy or "ALL"
     analysis["total_trades_ingested"] = len(trades)

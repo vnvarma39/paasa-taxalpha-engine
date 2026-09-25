@@ -29,6 +29,12 @@ from .dtaa_reconciler import (
 from .exporter import (
     ReportExporter,
 )
+from .ucits_optimizer import (
+    UCITSOptimizer,
+)
+from .global_tax import (
+    GlobalTaxEngine,
+)
 
 __all__ = [
     "Rule115CurrencyConverter",
@@ -43,4 +49,6 @@ __all__ = [
     "LossHarvester",
     "DTAAReconciler",
     "ReportExporter",
+    "UCITSOptimizer",
+    "GlobalTaxEngine",
 ]
