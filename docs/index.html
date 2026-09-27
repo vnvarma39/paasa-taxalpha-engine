@@ -52,6 +52,10 @@
       </p>
     </div>
     <div class="flex flex-wrap items-center gap-3">
+      <a href="#video-walkthrough" class="px-3 py-1.5 bg-acid text-black font-bold text-xs uppercase tracking-wider hover:bg-acidDark transition-all flex items-center gap-2">
+        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        Watch 100s Voiceover Demo
+      </a>
       <a href="https://github.com/vnvarma39/paasa-taxalpha-engine" target="_blank" class="px-3 py-1.5 bg-surface border border-surfaceBorder hover:border-acid text-xs text-white transition-all flex items-center gap-2">
         <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
         GitHub Repository
@@ -64,6 +68,29 @@
 
   <!-- Main Content Layout -->
   <main class="max-w-7xl mx-auto space-y-8">
+
+    <!-- 100-Second Narrated Video Walkthrough -->
+    <section id="video-walkthrough" class="bg-surface border border-acid/40 p-5 rounded-none">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs uppercase text-acid font-bold tracking-wider">Narrated Executive Walkthrough (1:40)</span>
+            <span class="text-[10px] px-2 py-0.5 bg-acid/10 text-acid">Customer ROI + Paasa Business Moat</span>
+          </div>
+          <h2 class="serif-heading text-2xl text-white mt-1">How TaxAlpha Unlocks ₹1.16L+ Client Savings & High-Retention HNI AUM</h2>
+          <p class="text-xs text-slateMuted">Turn on sound for a calm, 100-second breakdown of Rule 115 SBI TT normalization, wash-sale ETF swaps, and the 40% US Estate Tax UCITS shield:</p>
+        </div>
+        <a href="brag.mp4" target="_blank" class="px-3 py-1.5 bg-black border border-surfaceBorder hover:border-acid text-xs text-acid transition">
+          ↗ Open Direct Video (.MP4)
+        </a>
+      </div>
+      <div class="border border-surfaceBorder bg-black overflow-hidden">
+        <video controls preload="metadata" poster="brag.jpg" class="w-full max-h-[560px] object-contain mx-auto">
+          <source src="brag.mp4" type="video/mp4">
+          Your browser does not support HTML5 video.
+        </video>
+      </div>
+    </section>
 
     <!-- 60-Second Executive Presets -->
     <section class="bg-surface border border-surfaceBorder p-5 rounded-none">
